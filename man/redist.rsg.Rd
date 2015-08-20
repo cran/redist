@@ -68,13 +68,12 @@ Quarterly Journal of Political Science. 8(3): 239-269.
 
 \examples{
 
+\dontrun{
+
 ### Real data example from test set
 
 data("algdat.pfull")
 res <- redist.rsg(algdat.pfull$adjlist, algdat.pfull$precinct.data$pop, 3, 0.05)
-
-
-\dontrun{
 
 ### Example that generates test data from a square map with equal population districts
 ### Number of precincts is Nrows*Ncols

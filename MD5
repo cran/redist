@@ -1,12 +1,12 @@
-e2f54da4a90d66d724595ac1d38c6eae *ChangeLog
-5997789be76ef1eb5cb91045062ee2df *DESCRIPTION
-b4b47b3b093e9fd05734aebf4c4e73f5 *NAMESPACE
+a5790f43c470622ccf4851fd5a8b3284 *ChangeLog
+fecbc6d84444a010710939032732172a *DESCRIPTION
+51cf65c48421bafa744f0ebd3ff418ba *NAMESPACE
 9772d1bc8a28b41de5bead7f4b07a7f7 *R/RcppExports.R
 54692c430237917a870de9733b8ab347 *R/redist.R
 cd295b8a6ee987ba3cda0131c9e89ba1 *R/rsg.R
-e1c117b6d90e704de72a498db5e6408a *data/algdat.p10.rda
-f5d70d1ddc34bd3bd885414c548d88fa *data/algdat.p20.rda
-5e02375ff1d546befd0f001265962271 *data/algdat.pfull.rda
+e5f1b2a8af0267ec8e9661252271fb63 *data/algdat.p10.rda
+8ade7e1c8e12fa7d8c6041977e3ad17e *data/algdat.p20.rda
+b5bd8617fc2a2b15f4e807a78079eb16 *data/algdat.pfull.rda
 afb4866ba3559bb95a4a1bd32ea45120 *data/datalist
 ed70c5e25980b4922e35590aca118ebf *demo/00Index
 d56d644409e985ecdf94d5f1de35f210 *demo/fig4.R
@@ -17,7 +17,7 @@ f3f14f282a370ff7acf91f9eea03adb4 *man/redist-package.Rd
 0e2125e8c6a6823915af3a927ad5fe11 *man/redist.diagplot.Rd
 02015d2479dbfc886e03f2776b1d0f98 *man/redist.ipw.Rd
 5925b28ec78d4219c717b12ed9de057e *man/redist.mcmc.Rd
-eaca702c55161bacf0953d59ee36cff6 *man/redist.rsg.Rd
+8234e15d13ef97f4238546be23369dc3 *man/redist.rsg.Rd
 9b1a282c25469c07011bc5c0d3c5000c *man/redist.segcalc.Rd
 2a6f9e9e044a78154d3cfda5936d6f48 *src/Makevars
 8d46d69896a1f1d31ed76035a0e49d67 *src/Makevars.win
@@ -33,5 +33,5 @@ b31a573e62180e5a146762251cb37bb1 *src/redist_analysis.cpp
 715a91b4b2acef4ce188dc837fe0cc43 *src/rsg.cpp
 208bf3f8af098b22e1c39b3878d43f1f *src/rsg.h
 993cc657620313267a25bd5cc6d49b90 *src/sw_mh_alg.cpp
-658f209071680ad373f921816d452fe9 *src/sw_mh_helper.cpp
+fbca3bf57b66abf2cc6d568fde6af2a6 *src/sw_mh_helper.cpp
 21d59ffcd2c51ea0101b664d01026779 *src/sw_mh_helper.h

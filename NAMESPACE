@@ -1,6 +1,8 @@
 useDynLib(redist)
 importFrom(Rcpp, evalCpp)
 
+importFrom("grDevices", "dev.off", "pdf")
+
 ## redist.R
 export(redist.mcmc)
 export(redist.segcalc)
@@ -18,4 +20,4 @@ importFrom(coda, cumuplot)
 importFrom(coda, gelman.plot)
 
 ## Rcpp
-#exportPattern("^[[:alpha:]]+")
+## exportPattern("^[[:alpha:]]+")

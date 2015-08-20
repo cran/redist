@@ -284,8 +284,8 @@ List bsearch_boundary(List aList,
 
       // Check if element is in the partition - add to partition if false
       bool in_part = is_true(any(partition == u));
-      if(in_part == FALSE){
-	partition.push_back(u);
+      if(in_part == false){
+  	partition.push_back(u);
       }
       
       // Get adjacency vector for unit u
@@ -294,21 +294,21 @@ List bsearch_boundary(List aList,
       // Loop through elements of adj_u, add to queue and mark if not reached
       if(adj_u.size() > 0){
 	
-	// Start loop
-	for(int i = 0; i < adj_u.size(); i++){
+  	// Start loop
+  	for(int i = 0; i < adj_u.size(); i++){
 	  
-	  // Reach element v
-	  int v = adj_u(i);
+  	  // Reach element v
+  	  int v = adj_u(i);
 
-	  /* Check if already reached - if false, mark, add to partition, and
-	     add to queue */
-	  if(is_true(any(mark == v)) == FALSE){
-	    mark(v) = v;
-	    partition.push_back(v);
-	    q.push_back(v);
-	  }
+  	  /* Check if already reached - if false, mark, add to partition, and
+  	     add to queue */
+  	  if(is_true(any(mark == v)) == false){
+  	    mark(v) = v;
+  	    partition.push_back(v);
+  	    q.push_back(v);
+  	  }
 
-	}
+  	}
 
       }
 
@@ -321,11 +321,11 @@ List bsearch_boundary(List aList,
     if(q.size() == 0){
 
       /* First, find boundary units that are in the reached partition and
-	 remove them from boundary_units vector */
+  	 remove them from boundary_units vector */
       for(int i = boundary_indices.n_elem - 1; i >= 0; i--){
-	if(is_true(any(partition == boundary_indices(i))) == TRUE){
-	  boundary_indices.shed_row(i);
-	}
+  	if(is_true(any(partition == boundary_indices(i))) == true){
+  	  boundary_indices.shed_row(i);
+  	}
       }
       
       // Store the partition, clear partition vector
@@ -334,9 +334,9 @@ List bsearch_boundary(List aList,
 
       // Re-initialize breadth search from new starting value if nonempty
       if(boundary_indices.n_elem > 0){
-	q = aList(boundary_indices(0));
-	mark(boundary_indices(0)) = boundary_indices(0);
-	partition.push_back(boundary_indices(0));
+  	q = aList(boundary_indices(0));
+  	mark(boundary_indices(0)) = boundary_indices(0);
+  	partition.push_back(boundary_indices(0));
       }
 
     }
@@ -344,8 +344,9 @@ List bsearch_boundary(List aList,
   }while(boundary_indices.n_elem > 0);
 
   List out;
+  int npartitions = bsearch.size();
   out["bsearch"] = bsearch;
-  out["npartitions"] = bsearch.size();
+  out["npartitions"] = npartitions;
 
   return out;
 
