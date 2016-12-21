@@ -9,6 +9,7 @@
 // Header files
 #include <RcppArmadillo.h>
 #include <RcppArmadilloExtensions/sample.h>
+#include <time.h> 
 #include "sw_mh_helper.h"
 #include "make_swaps_helper.h"
 #include "constraint_calc_helper.h"
@@ -39,7 +40,8 @@ List swMH(List aList,
 	  int anneal_beta_compact = 0,
 	  int anneal_beta_segregation = 0,
 	  int anneal_beta_similar = 0,
-	  int adjswap = 1)
+	  int adjswap = 1,
+	  int exact_mh = 0)
 {
 
   /* Inputs to function:
@@ -83,6 +85,9 @@ List swMH(List aList,
      anneal_beta_similar: flag for whether to anneal the beta similarity parameter
 
      adjswap: flag for whether to force algorithm to only do adjacent swaps
+
+     exact_mh: flag for whether to calculate the exact metropolis-hastings w boundary correction
+
    */
 
   // Preprocess vector of congressional district assignments
@@ -111,13 +116,18 @@ List swMH(List aList,
   }
 
   // Get ssd denominator
-  double ssd_denom = as<double>(calc_betacompact(cdvec,
-						 cdvec,
-						 popvec,
-						 beta_compact,
-						 uniquedists,
-						 ssdmat,
-						 1.0)["compact_new_psi"]);
+  double ssd_denom;
+  if(beta_compact != 0.0 || anneal_beta_compact == 1){
+    ssd_denom = as<double>(calc_betacompact(cdvec,
+					    cdvec,
+					    popvec,
+					    beta_compact,
+					    uniquedists,
+					    ssdmat,
+					    1.0)["compact_new_psi"]);
+  }else{
+    ssd_denom = 1;
+  }
 
   // Define parity, min and max popoulations
   double parity = sum(popvec) / (max(cdvec) + 1);
@@ -143,8 +153,12 @@ List swMH(List aList,
   NumericVector psisegregation_store(nsims);
   NumericVector psisimilar_store(nsims);
 
-  // Store value of p for all simulations
+  // Store value of p, lambda, weights for all simulations
   NumericVector pparam_store(nsims);
+
+  // Store number of connected components along the boundary, boundary weights
+  NumericVector boundarypartitions_store(nsims);
+  NumericVector boundaryratio_store(nsims);
 
   // Store sequence of betas - geyer thompson
   NumericVector betaseq_store(nsims);
@@ -161,44 +175,61 @@ List swMH(List aList,
     betaseq_store[z] = beta_similar;
   }
 
+  // Iterate up z
+  z++;
+
+  if(anneal_beta_population == 0 && beta_population != 0.0){
+    std::fill(betaseq_store.begin(), betaseq_store.end(), beta_population);
+  }
+  if(anneal_beta_compact == 0 && beta_compact != 0.0){
+    std::fill(betaseq_store.begin(), betaseq_store.end(), beta_compact);
+  }
+  if(anneal_beta_segregation == 0 && beta_segregation != 0.0){
+    std::fill(betaseq_store.begin(), betaseq_store.end(), beta_segregation);
+  }
+  if(anneal_beta_similar == 0 && beta_similar != 0.0){
+    std::fill(betaseq_store.begin(), betaseq_store.end(), beta_similar);
+  }
+
   // Store metropolis-hastings decisions - geyer thompson
   NumericVector decision_betaseq_store(nsims);
   NumericVector mhprob_betaseq_store(nsims);
 
+  // Initialize objects
+  List aList_con; NumericVector boundary; List swap_partitions;
+  List boundary_partitions; List cutedge_lists; int p; List aList_con_prop;
+  NumericVector boundary_prop; List boundary_partitions_prop; int decision;
+  List get_constraint; List gt_out; NumericVector cdvec_prop; int i;
+
   // Open the simulations
   while(k < nsims){
-
-    // Iterate up z
-    z++;
 
     /////////////////////////////////////
     // First: determine boundary cases //
     /////////////////////////////////////
     // Modify aList list for connected components within cd
-    List aList_con = genAlConn(aList, cdvec);
+    aList_con = genAlConn(aList, cdvec);
 
     // Get vector of boundary units
-    NumericVector boundary = findBoundary(aList, aList_con);
+    boundary = findBoundary(aList, aList_con);
 
     ///////////////////////////////////////////////////////////////////////////
     // Second: within each congressional district, turn on edges with pr = p //
     ///////////////////////////////////////////////////////////////////////////
     // Continue trying until you get p good swaps
-    List swap_partitions;
-    int p;
     do{
-
+      
       // First element is connected adjlist, second element is cut adjlist
-      List cutedge_lists = cut_edges(aList_con, eprob);
-
+      cutedge_lists = cut_edges(aList_con, eprob);
+      
       ////////////////////////////////////////////////////////////////////
       // Third: generate a list of connected components within each cd //
       ///////////////////////////////////////////////////////////////////
       /* List of connected partitions after edgecuts - first element is list of 
 	 partitions, second element is number of partitions */
-      List boundary_partitions = bsearch_boundary(cutedge_lists["connectedlist"],
-						  boundary);
-      
+      boundary_partitions = bsearch_boundary(cutedge_lists["connectedlist"],
+					     boundary);
+
       ///////////////////////////////////////////////////////////////////////
       // Fourth - select several connected components w/ unif distribution //
       ///////////////////////////////////////////////////////////////////////
@@ -223,93 +254,109 @@ List swMH(List aList,
 				   beta_segregation,
 				   beta_similar,
 				   ssd_denom);
-      
+
     }while(as<int>(swap_partitions["goodprop"]) == 0);
+    
+    // Get new boundary, then get number of partitions
+    if(exact_mh == 1){
+      aList_con_prop = genAlConn(aList, as<NumericVector>(swap_partitions["proposed_partition"]));
+      boundary_prop = findBoundary(aList, aList_con_prop);
+      boundary_partitions_prop = bsearch_boundary(cutedge_lists["connectedlist"],
+						  boundary_prop);
+      
+      // Correct npartitions to only include boundary partitions that don't break contiguity
+      int nvalid_current = count_valid(aList, boundary_partitions["bsearch"], cdvec);
+      int nvalid_prop = count_valid(aList, boundary_partitions_prop["bsearch"],
+				    swap_partitions["proposed_partition"]);
+      
+      // Modify metropolis-hastings ratio
+      swap_partitions["mh_prob"] = as<double>(swap_partitions["mh_prob"]) *
+	pow((double)nvalid_current / nvalid_prop, (double)p);
+      boundaryratio_store(k) = pow((double)nvalid_current / nvalid_prop, (double)p);
+    }
     
     //////////////////////////////////////////
     // Fifth - Accept with some probability //
     //////////////////////////////////////////
-    int decision = mh_decision(as<double>(swap_partitions["mh_prob"]));
-
+    decision = mh_decision(as<double>(swap_partitions["mh_prob"]));
+  
     /////////////////////////////////////////////////////////////
     // Also - for simulated tempering, propose a possible swap //
     /////////////////////////////////////////////////////////////
     if((anneal_beta_population == 1) || (beta_population != 0.0)){ // If constraining, get constraints
-      List get_constraint = calc_betapop(cdvec,
-    					 as<NumericVector>(swap_partitions["proposed_partition"]),
-    					 popvec,
-    					 beta_population,
-    					 uniquedists);
-
+      get_constraint = calc_betapop(cdvec,
+				    as<NumericVector>(swap_partitions["proposed_partition"]),
+				    popvec,
+				    beta_population,
+				    uniquedists);
+      
       // Store psi value
       if(decision == 1){
 	psipop_store[k] = as<double>(get_constraint["pop_new_psi"]);
       }else{
 	psipop_store[k] = as<double>(get_constraint["pop_old_psi"]);
       }
-      
+    
       if(anneal_beta_population == 1){ // Tempering step
-	List gt_out;
 	if(decision == 1){ // Using value of psi if accepted
-	  
+	
 	  // Propose swapping beta
 	  gt_out = changeBeta(beta_sequence,
 			      beta_population,
 			      as<double>(get_constraint["pop_new_psi"]),
 			      beta_weights,
 			      adjswap);
-	  
+	
 	}else{ // Using value of psi if not accepted
-	  
+	
 	  // Propose swapping beta
 	  gt_out = changeBeta(beta_sequence,
 			      beta_population,
 			      as<double>(get_constraint["pop_old_psi"]),
 			      beta_weights,
 			      adjswap);
-	  
-	}
 	
+	}
+      
 	// Change beta
 	beta_population = as<double>(gt_out["beta"]);
-	
+      
 	// Store the output of geyer thompson
 	if(k < nsims){
 	  betaseq_store[z] = beta_population;
 	}
 	decision_betaseq_store[k] = as<int>(gt_out["mh_decision"]);
 	mhprob_betaseq_store[k] = as<double>(gt_out["mh_prob"]);
-
+      
       }
-
+    
     }
     if((anneal_beta_compact == 1) || (beta_compact != 0.0)){ // If constraining, get value of constraints
-      List get_constraint = calc_betacompact(cdvec,
-					     as<NumericVector>(swap_partitions["proposed_partition"]),
-					     popvec,
-					     beta_compact,
-					     uniquedists,
-					     ssdmat,
-					     ssd_denom);
-
+      get_constraint = calc_betacompact(cdvec,
+					as<NumericVector>(swap_partitions["proposed_partition"]),
+					popvec,
+					beta_compact,
+					uniquedists,
+					ssdmat,
+					ssd_denom);
+      
       // Get psi value
       if(decision == 1){
 	psicompact_store[k] = as<double>(get_constraint["compact_new_psi"]);
       }else{
 	psicompact_store[k] = as<double>(get_constraint["compact_old_psi"]);
       }
-
+    
       if(anneal_beta_compact == 1){ // Annealing step
-	List gt_out;
 	if(decision == 1){ // Using value of psi if accepted
-	  
+	
 	  // Propose swapping beta
 	  gt_out = changeBeta(beta_sequence,
 			      beta_compact,
 			      as<double>(get_constraint["compact_new_psi"]),
 			      beta_weights,
 			      adjswap);
-	  
+	
 	}else{ // Using value of psi if not accepted
 	  
 	  // Propose swapping beta
@@ -335,13 +382,13 @@ List swMH(List aList,
 
     }
     if((anneal_beta_segregation == 1) || (beta_segregation != 0.0)){ // If constraining, get value of constraint
-      List get_constraint = calc_betasegregation(cdvec,
-						 as<NumericVector>(swap_partitions["proposed_partition"]),
-						 popvec,
-						 beta_segregation,
-						 uniquedists,
-						 grouppopvec);
-
+      get_constraint = calc_betasegregation(cdvec,
+					    as<NumericVector>(swap_partitions["proposed_partition"]),
+					    popvec,
+					    beta_segregation,
+					    uniquedists,
+					    grouppopvec);
+      
       // Get psi value
       if(decision == 1){
 	psisegregation_store[k] = as<double>(get_constraint["segregation_new_psi"]);
@@ -350,7 +397,6 @@ List swMH(List aList,
       }
 
       if(anneal_beta_segregation == 1){ // Annealing step
-	List gt_out;
 	if(decision == 1){
 
 	  // Propose swapping beta
@@ -385,11 +431,11 @@ List swMH(List aList,
 
     }
     if((anneal_beta_similar == 1) || (beta_similar != 0.0)){ // If constraining, get value of constraint
-      List get_constraint = calc_betasimilar(cdvec,
-					     as<NumericVector>(swap_partitions["proposed_partition"]),
-					     cdorigvec,
-					     beta_similar,
-					     uniquedists);
+      get_constraint = calc_betasimilar(cdvec,
+					as<NumericVector>(swap_partitions["proposed_partition"]),
+					cdorigvec,
+					beta_similar,
+					uniquedists);
 
       // Get psi value
       if(decision == 1){
@@ -399,7 +445,6 @@ List swMH(List aList,
       }
 
       if(anneal_beta_similar == 1){ // Annealing step
-	List gt_out;
 	if(decision == 1){
 
 	  // Propose swapping beta
@@ -433,19 +478,23 @@ List swMH(List aList,
       }
 
     }
-    
     //////////////////////////////////////
     // Six = clean up and store results //
     //////////////////////////////////////
+    cdvec_prop = clone(as<NumericVector>(swap_partitions["proposed_partition"]));
     if(decision == 1){
       // Update cds to proposed cds
       cdvec = clone(as<NumericVector>(swap_partitions["proposed_partition"]));
       // Update district_pops to proposed district pops
       district_pops = clone(as<NumericVector>(swap_partitions["updated_cd_pops"]));
+      // Store number of boundary partitions
+      boundarypartitions_store[k] = boundary_partitions["npartitions"];
+    }else{
+      boundarypartitions_store[k] = boundarypartitions_store[k-1];
     }
     
     // Store previous iteration
-    for(int i = 0; i < cdvec.size(); i++){
+    for(i = 0; i < cdvec.size(); i++){
       cd_store[k * cdvec.size() + i] = cdvec(i);
     }
 
@@ -454,10 +503,12 @@ List swMH(List aList,
 
     // Store the decision
     decision_store[k] = decision;
+    
     mhprob_store[k] = as<double>(swap_partitions["mh_prob"]);
 
-    // Advance k
+    // Advance k, z
     k++;
+    z++;
 
     // Print k
     Rcout << k << std::endl;
@@ -467,20 +518,25 @@ List swMH(List aList,
   // Get distance from parity of each partition
   NumericVector dist_parity_vec = distParity(cd_store, popvec);
 
+  NumericVector dist_orig_vec = diff_origcds(cd_store, cdorigvec);
+  
   // Create list, store outputx
   List out;
   out["partitions"] = cd_store;
   out["distance_parity"] = dist_parity_vec;
+  out["distance_original"] = dist_orig_vec;
   out["mhdecisions"] = decision_store;
   out["mhprob"] = mhprob_store;
   out["pparam"] = pparam_store;
+  out["beta_sequence"] = betaseq_store;
   out["constraint_pop"] = psipop_store;
   out["constraint_compact"] = psicompact_store;
   out["constraint_segregation"] = psisegregation_store;
   out["constraint_similar"] = psisimilar_store;
+  out["boundary_partitions"] = boundarypartitions_store;
+  out["boundaryratio"] = boundaryratio_store;
   if((anneal_beta_population == 1) || (anneal_beta_compact == 1) ||
      (anneal_beta_segregation == 1) || (anneal_beta_similar == 1)){
-    out["beta_sequence"] = betaseq_store;
     out["mhdecisions_beta"] = decision_betaseq_store;
     out["mhprob_beta"] = mhprob_betaseq_store;
   }

@@ -136,7 +136,6 @@ int countpartitions(List aList)
   
   //Initialize connected components
   IntegerVector currConnComp(aList.size());
-  int indexCurrConnComp = 0;
 
   //Initialize the number of connected components
   int numConnComp = 0;
@@ -303,7 +302,7 @@ double update_mhprob(NumericVector prop_partition,
   }
 
   // Recalculate mh probability
-  mh_prob = (double)mh_prob * pow(1 - eprob, c1) / pow(1 - eprob, c2);
+  mh_prob = (double)mh_prob * ((double)pow(1 - eprob, c1) / pow(1 - eprob, c2));
 
   return mh_prob;
 
@@ -334,6 +333,44 @@ NumericMatrix calcPWDh (NumericMatrix x)
   }
   
   return out;
+
+}
+
+// Function to calculate deviation from original cd vector
+NumericVector diff_origcds(NumericMatrix mat,
+			   NumericVector cds){
+
+  /* Inputs to function:
+     mat: Matrix of congressional district assignments
+
+     cds: Vector of congressional district assignments to serve as baseline
+   */
+
+  // Get length of cd vector
+  unsigned int len_cds = cds.size();
+
+  // Convert cds to arma
+  arma::uvec cds_arma = as<arma::uvec>(cds);
+
+  // Initialize objects
+  unsigned int i; unsigned int j; unsigned int k = mat.ncol(); arma::vec plan;
+  arma::uvec compare; NumericVector store_compare(k);
+  
+  // Start loop over mat columns
+  for(i = 0; i < k; i++){
+
+    // Get the plan
+    plan = mat(_,i);
+
+    // Compare matrices
+    compare = (plan == cds_arma);
+
+    // Sum up and divide by len_cds
+    store_compare(i) = (double)sum(compare) / len_cds;
+      
+  }
+
+  return store_compare;
 
 }
 

@@ -8,12 +8,10 @@
 
 redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
                            popcons = NULL, grouppopvec = NULL, ssdmat = NULL,
-                           betacompact = 0, betapop = 0,
-                           betaseg = 0, betasimilar = 0,
-                           temperbetacompact = 0, temperbetapop = 0,
-                           temperbetaseg = 0, temperbetasimilar = 0,
-                           betaseq = NULL, betaseqlength = 10,
-                           betaweights = NULL, adjswaps = TRUE, maxiterrsg = NULL
+                           beta = 0, temper = NULL, constraint = NULL,
+                           betaseq = NULL, betaseqlength = NULL,
+                           betaweights = NULL, adjswaps = TRUE, maxiterrsg = NULL,
+                           contiguitymap = NULL
                            ){
 
     #########################
@@ -29,22 +27,10 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
     ##               in conjunction with the segregation M-H constraint
     ## ssdmat - matrix of squared distances between population units.
     ##          To be used when applying the compactness constraint.
-    ## betacompact - target strength of compactness constraint in M-H acceptance
-    ##               ratio. Default set to 0 (no constraint).
-    ## betapop - target strength of population constraint in M-H acceptance ratio.
-    ##           Default set to 0 (no constraint)
-    ## betaseg - target strength of segregation constraint in M-H acceptance
-    ##           ratio. Default set to 0 (no constraint)
-    ## betasimilar - target strength of district similarity in M-H acceptance
-    ##               ratio. Default set to 0 (no constraint)
-    ## temperbetacompact - Use geyer-thompson tempering on betacompact? Default
-    ##                     set to 0 (no tempering).
-    ## temperbetapop - Use geyer-thompson tempering on betapop? Default set to 0
-    ##                 (no tempering).
-    ## temperbetaseg - Use geyer-thompson tempering on betaseg? Default set to 0
-    ##                 (no tempering).
-    ## temperbetasimilar - Use geyer-thompson tempering on betasimilar? Default
-    ##                     set to 0 (no tempering).
+    ## beta - target strength of constraint in MH ratio. Defaults to 0.
+    ## temper - whether to use tempering (parallel or simulated) algorithms.
+    ##          Defaults to `none` (no tempering)
+    ## constraint - which constraint to apply. Defaults to `none` (no tempering)
     ## betaseq - Spacing for beta sequence if tempering. Default is power law
     ##           spacing, but can also be provided by user
     ## betaseqlength - Number of temperatures in the beta sequence. Default is
@@ -53,6 +39,7 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
     ## adjswaps - Flag for adjacent swaps for geyer-thompson tempering or MPI
     ##            parallel tempering. Default to TRUE
     ## maxiterrsg - Maximum number of iterations for RSG algorithm
+    ## contiguitymap - Distance criteria for adjacency list from input map
     
     #######################
     ## Check missingness ##
@@ -62,6 +49,18 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
     }
     if(missing(popvec)){
         stop("Please supply vector of geographic unit populations")
+    }
+    if((beta == 0 & temper == "none" & constraint != "none") |
+       (beta == 0 & temper == "simulated") |
+       (temper != "none" & constraint == "none")){
+        stop("If applying constraints or using simulated tempering, please set non-zero constraint and specify the constraint.")
+    }
+    if(!(temper %in% c("none", "simulated", "parallel"))){
+        stop("Please specify either `none`, `simulated` or `parallel` for tempering argument")
+    }
+    if(!(constraint %in% c("none", "compact", "segregation",
+                           "population", "similarity"))){
+        stop("Please specify `none`, `compact`, `segregation`, `population`, or `similarity` for constraint")
     }
     
     ############################################
@@ -109,8 +108,11 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
             }
         }else if(class(adjobj) == "SpatialPolygonsDataFrame"){ ## shp object
 
+            ## Distance criterion
+            queens <- ifelse(contiguitymap == "rooks", FALSE, TRUE)
+            
             ## Convert shp object to adjacency list
-            adjlist <- poly2nb(adjobj, queen = FALSE)
+            adjlist <- poly2nb(adjobj, queen = queens)
             
             ## Zero-index list
             for(i in 1:length(adjlist)){
@@ -152,13 +154,16 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
     ## Check whether initial partitions (if provided) are contiguous ##
     ###################################################################
     if(!is.null(initcds)){
-        ndists <- length(unique(initcds))
-        divlist <- genAlConn(adjlist, initcds)
-        ncontig <- countpartitions(divlist)
-
-        if(ncontig != ndists){
-            stop(paste("Your initial congressional districts have ", ndists, " unique districts but ",
-                 ncontig, " contigous connected components. Please provide a starting map with contigous districts.", sep = ""))
+        if(!is.na(initcds)[1]){
+            ndists <- length(unique(initcds))
+            divlist <- genAlConn(adjlist, initcds)
+            ncontig <- countpartitions(divlist)
+            
+            if(ncontig != ndists){
+                stop(paste("Your initial congressional districts have ", ndists,
+                           " unique districts but ",
+                           ncontig, " contigous connected components. Please provide a starting map with contigous districts.", sep = ""))
+            }
         }
     }
 
@@ -166,46 +171,33 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
     ## If no initial congressional districts provided, use Random Seed and Grow ##
     ## (Chen and Rodden 2013) algorithm                                         ##
     ##############################################################################
-    if(is.null(initcds)){
+    if(is.null(initcds) | is.na(initcds)[1]){
 
-        ## Set up target pop, strength of constraint
+        ## Set up target pop, strength of constraint (10%)
         if(is.null(popcons)){
-            popcons <- 100
+            popcons_rsg <- .1
+        }else{
+            popcons_rsg <- popcons
         }
 
         ## Print start
         divider <- c(paste(rep("=", 20), sep = "", collapse = ""), "\n")
         
-        cat("\n")
-        cat(divider)
-        cat("redist.rsg(): Automated Redistricting Starts\n\n")
+        cat("\n", append = TRUE)
+        cat(divider, append = TRUE)
+        cat("redist.rsg(): Automated Redistricting Starts\n\n", append= TRUE)
         
         ## Run the algorithm
-        repeat{
-            initout <- redist.rsg(adj.list = adjlist,
-                                  population = popvec,
-                                  ndists = ndists,
-                                  thresh = popcons,
-                                  verbose = FALSE,
-                                  maxiter = maxiterrsg)
-            if(!is.na(initout$district_membership[1])){
-
-                ## Check whether it has enough contiguous districts
-                divlist <- genAlConn(adjlist, initout$district_membership)
-                ncontig <- countpartitions(divlist)
-                
-                if(ncontig == ndists){
-                    break
-                }
-                
-            }
-        }
-
+        initout <- redist.rsg(adj.list = adjlist,
+                              population = popvec,
+                              ndists = ndists,
+                              thresh = popcons_rsg,
+                              verbose = FALSE,
+                              maxiter = maxiterrsg)
         ## Get initial cds
         initcds <- initout$district_membership
         
     }
-    
     ###########################################################
     ## Check other inputs to make sure they are right length ##
     ###########################################################
@@ -217,11 +209,11 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
         stop("Each entry in adjacency list must have an initial congressional
              district assignment")
     }
-    if((betaseg != 0) & (is.null(grouppopvec))){
+    if(constraint == "segregation" & is.null(grouppopvec)){
         stop("If applying the segregation constraint, please provide a vector
              of subgroup populations")
     }
-    if((betaseg != 0) & (!is.null(grouppopvec))){
+    if(constraint == "segregation" & !(is.null(grouppopvec))){
         if((length(grouppopvec) != length(adjlist)) |
            (sum(is.na(grouppopvec)) > 0)){
             stop("If applying the segregation constraint, each entry in adjacency
@@ -257,7 +249,7 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
     ################################
     ## Set ssdmat if not provided ##
     ################################
-    if(is.null(ssdmat) & betacompact != 0){
+    if(is.null(ssdmat) & constraint == "compact"){
         if(class(adjobj) == "SpatialPolygonsDataFrame"){
             centroids <- coordinates(adjobj)
             ssdmat <- calcPWDh(centroids)
@@ -266,6 +258,37 @@ redist.preproc <- function(adjobj, popvec, initcds = NULL, ndists = NULL,
         }
     }else if(is.null(ssdmat)){
         ssdmat <- matrix(1, length(adjlist), length(adjlist))
+    }
+
+    ########################
+    ## Set up constraints ##
+    ########################
+    betapop <- 0; betacompact <- 0; betaseg <- 0; betasimilar <- 0
+    temperbetapop <- 0; temperbetacompact <- 0
+    temperbetaseg <- 0; temperbetasimilar <- 0
+    if(constraint == "compact"){
+        betacompact <- beta
+        if(temper == "simulated"){
+            temperbetacompact <- 1
+        }
+    }
+    if(constraint == "segregation"){
+        betaseg <- beta
+        if(temper == "simulated"){
+            temperbetaseg <- 1
+        }
+    }
+    if(constraint == "population"){
+        betapop <- beta
+        if(temper == "simulated"){
+            temperbetapop <- 1
+        }
+    }
+    if(constraint == "similarity"){
+        betasimilar <- beta
+        if(temper == "simulated"){
+            temperbetasimilar <- 1
+        }
     }
     
     ###################################
@@ -439,9 +462,9 @@ redist.combine <- function(savename, nsims, nloop, nthin, nunits, temper = 0
     ## Store data in algout object ##
     #################################
     if(temper == 1){
-        algout <- vector(mode = "list", length = 11)
+        algout <- vector(mode = "list")
     }else{
-        algout <- vector(mode = "list", length = 8)
+        algout <- vector(mode = "list")
     }
     algout$partitions <- partitions
     algout$distance_parity <- distance_parity
@@ -473,15 +496,12 @@ redist.combine <- function(savename, nsims, nloop, nthin, nunits, temper = 0
 redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
                         loopscompleted = 0, nloop = 1, nthin = 1, eprob = 0.05,
                         lambda = 0, popcons = NULL, grouppopvec = NULL,
-                        ssdmat = NULL,
-                        betacompact = 0, betapop = 0,
-                        betaseg = 0, betasimilar = 0,
-                        temperbetacompact = 0, temperbetapop = 0,
-                        temperbetaseg = 0, temperbetasimilar = 0,
+                        ssdmat = NULL, beta = 0, temper = "none",
+                        constraint = "none",
                         betaseq = "powerlaw", betaseqlength = 10,
-                        betaweights = NULL,
+                        betaweights = NULL, 
                         adjswaps = TRUE, rngseed = NULL, maxiterrsg = 5000,
-                        savename = NULL, verbose = TRUE
+                        contiguitymap = "rooks", exact_mh = 0, savename = NULL, verbose = TRUE
                         ){
 
     #########################
@@ -504,22 +524,10 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
     ##               in conjunction with the segregation M-H constraint
     ## ssdmat - matrix of squared distances between population units.
     ##          To be used when applying the compactness constraint.
-    ## betacompact - target strength of compactness constraint in M-H acceptance
-    ##               ratio. Default set to 0 (no constraint).
-    ## betapop - target strength of population constraint in M-H acceptance ratio.
-    ##           Default set to 0 (no constraint)
-    ## betaseg - target strength of segregation constraint in M-H acceptance
-    ##           ratio. Default set to 0 (no constraint)
-    ## betasimilar - target strength of district similarity in M-H acceptance
-    ##               ratio. Default set to 0 (no constraint)
-    ## temperbetacompact - Use geyer-thompson tempering on betacompact? Default
-    ##                     set to 0 (no tempering).
-    ## temperbetapop - Use geyer-thompson tempering on betapop? Default set to 0
-    ##                 (no tempering).
-    ## temperbetaseg - Use geyer-thompson tempering on betaseg? Default set to 0
-    ##                 (no tempering).
-    ## temperbetasimilar - Use geyer-thompson tempering on betasimilar? Default
-    ##                     set to 0 (no tempering).
+    ## beta - target strength of constraint in MH ratio. Defaults to 0.
+    ## temper - whether to use tempering (parallel or simulated) algorithms.
+    ##          Defaults to `none` (no tempering)
+    ## constraint - which constraint to apply. Defaults to `none` (no tempering)
     ## betaseq - Spacing for beta sequence if tempering. Default is power law
     ## betaseqlength - Number of temperatures in the beta sequence. Default is
     ##                 ten
@@ -528,6 +536,9 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
     ##            parallel tempering. Default to TRUE
     ## rngseed - Random number generator seed number. Provided by user
     ## maxiterrsg - Maximum number of iterations for random seed-and-grow algorithm
+    ## contiguitymap - Use queens distance or rooks distance for creating an adjlist
+    ##                 from map. Defaults to rooks.
+    ## exact_mh - Use exact metropolis hastings with boundary correction. Default to 0
     ## savename - Where to save the simulations
     ## verbose - whether to print initialization script
 
@@ -535,10 +546,10 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
         ## Initialize ##
         divider <- c(paste(rep("=", 20), sep = "", collapse = ""), "\n")
         
-        cat("\n")
-        cat(divider)
+        cat("\n", append = TRUE)
+        cat(divider, append = TRUE)
         cat("redist.mcmc(): Automated Redistricting Simulation Using
-         Markov Chain Monte Carlo\n\n")
+         Markov Chain Monte Carlo\n\n", append = TRUE)
     }
     
     ##########################
@@ -560,7 +571,15 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
     if(nloop > 1 & missing(savename)){
         stop("Please supply save directory if saving simulations at checkpoints")
     }
+    if(!(contiguitymap %in% c("queens", "rooks"))){
+        stop("Please supply `queens` or `rooks` for a distance criteria")
+    }
 
+    ## Set seed before first iteration of algorithm if provided by user
+    if(!is.null(rngseed) & is.numeric(rngseed)){
+        set.seed(rngseed)
+    }
+    
     #####################
     ## Preprocess data ##
     #####################
@@ -568,19 +587,18 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
                                  initcds = initcds, ndists = ndists,
                                  popcons = popcons,
                                  grouppopvec = grouppopvec, ssdmat = ssdmat,
-                                 betacompact = betacompact, betapop = betapop,
-                                 betaseg = betaseg, betasimilar = betasimilar,
-                                 temperbetacompact = temperbetacompact,
-                                 temperbetapop = temperbetapop,
-                                 temperbetaseg = temperbetaseg,
-                                 temperbetasimilar = temperbetasimilar,
-                                 betaseq = betaseq, betaweights = betaweights,
-                                 adjswaps = adjswaps, maxiterrsg = maxiterrsg)
+                                 beta = beta, temper = temper,
+                                 constraint = constraint,
+                                 betaseq = betaseq, betaseqlength = betaseqlength,
+                                 betaweights = betaweights,
+                                 adjswaps = adjswaps, maxiterrsg = maxiterrsg,
+                                 contiguitymap = contiguitymap)
 
-    ## Set seed before first iteration of algorithm if provided by user
-    if(!is.null(rngseed) & is.numeric(rngseed)){
-        set.seed(rngseed)
-    }
+    ## Set betas - if tempering, modified later
+    betapop <- preprocout$params$betapop
+    betacompact <- preprocout$params$betacompact
+    betaseg <- preprocout$params$betaseg
+    betasimilar <- preprocout$params$betasimilar
 
     ## Get starting loop value
     loopstart <- loopscompleted + 1
@@ -595,17 +613,17 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
             
             cds <- algout$partitions[,nsims]
             
-            if(temperbetacompact == 1){
-                betacompact <- algout$betaseq_store[nsims]
+            if(temper != "none" & constraint == "compact"){
+                betacompact <- algout$beta_sequence[nsims]
             }
-            if(temperbetaseg == 1){
-                betaseg <- algout$betaseq_store[nsims]
+            if(temper != "none" & constraint == "segregation"){
+                betaseg <- algout$beta_sequence[nsims]
             }
-            if(temperbetapop == 1){
-                betapop <- algout$betaseq_store[nsims]
+            if(temper != "none" & constraint == "population"){
+                betapop <- algout$beta_sequence[nsims]
             }
-            if(temperbetasimilar == 1){
-                betasimilar <- algout$betaseq_store[nsims]
+            if(temper != "none" & constraint == "similarity"){
+                betasimilar <- algout$beta_sequence[nsims]
             }
             if(!is.null(rngseed) & is.numeric(rngseed)){
                 .Random.seed <- algout$randseed
@@ -629,17 +647,17 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
                 
                 cds <- algout$partitions[,nsims]
                 
-                if(temperbetacompact == 1){
-                    betacompact <- algout$betaseq_store[nsims]
+                if(temper != "none" & constraint == "compact"){
+                    betacompact <- algout$beta_sequence[nsims]
                 }
-                if(temperbetaseg == 1){
-                    betaseg <- algout$betaseq_store[nsims]
+                if(temper != "none" & constraint == "segregation"){
+                    betaseg <- algout$beta_sequence[nsims]
                 }
-                if(temperbetapop == 1){
-                    betapop <- algout$betaseq_store[nsims]
+                if(temper != "none" & constraint == "population"){
+                    betapop <- algout$beta_sequence[nsims]
                 }
-                if(temperbetasimilar == 1){
-                    betasimilar <- algout$betaseq_store[nsims]
+                if(temper != "none" & constraint == "similarity"){
+                    betasimilar <- algout$beta_sequence[nsims]
                 }
                 if(!is.null(rngseed) & is.numeric(rngseed)){
                     .Random.seed <- algout$randseed
@@ -666,15 +684,16 @@ redist.mcmc <- function(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
                        beta_weights = preprocout$params$betaweights,
                        ssdmat = preprocout$data$ssdmat,
                        lambda = lambda,
-                       beta_population = preprocout$params$betapop,
-                       beta_compact = preprocout$params$betacompact,
-                       beta_segregation = preprocout$params$betaseg,
-                       beta_similar = preprocout$params$betasimilar,
+                       beta_population = betapop,
+                       beta_compact = betacompact,
+                       beta_segregation = betaseg,
+                       beta_similar = betasimilar,
                        anneal_beta_population = preprocout$params$temperbetapop,
                        anneal_beta_compact = preprocout$params$temperbetacompact,
                        anneal_beta_segregation = preprocout$params$temperbetaseg,
                        anneal_beta_similar = preprocout$params$temperbetasimilar,
-                       adjswap = preprocout$params$adjswaps)
+                       adjswap = preprocout$params$adjswaps,
+                       exact_mh = exact_mh)
 
         class(algout) <- "redist"
 

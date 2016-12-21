@@ -45,8 +45,8 @@
   Benjamin Fifield, Department of Politics, Princeton University 
   \email{bfifield@princeton.edu}, \url{http://www.benfifield.com}
 
-  Michael Higgins, Department of Politics, Princeton University
-  \email{mjh5@princeton.edu}, \url{http://www.princeton.edu/~mjh5}
+  Michael Higgins, Department of Statistics, Kansas State University
+  \email{mikehiggins@k-state.edu}, \url{http://www-personal.ksu.edu/~mikehiggins/}
   
   Kosuke Imai, Department of Politics, Princeton University
   \email{kimai@princeton.edu}, \url{http://imai.princeton.edu}
@@ -68,12 +68,13 @@ Quarterly Journal of Political Science. 8(3): 239-269.
 
 \examples{
 
-\dontrun{
-
 ### Real data example from test set
 
 data("algdat.pfull")
 res <- redist.rsg(algdat.pfull$adjlist, algdat.pfull$precinct.data$pop, 3, 0.05)
+
+
+\dontrun{
 
 ### Example that generates test data from a square map with equal population districts
 ### Number of precincts is Nrows*Ncols
