@@ -7,8 +7,9 @@
 redist.findparams(adjobj, popvec, nsims, ndists = NULL, initcds = NULL,
 adapt_lambda = FALSE, adapt_eprob = FALSE,
 params, ssdmat = NULL, grouppopvec = NULL,
+nstartval_store, maxdist_startval,
 maxiterrsg = 5000, report_all = TRUE,
-parallel = FALSE, nthreads = NULL, verbose = TRUE)
+parallel = FALSE, nthreads = NULL, log = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{adjobj}{An adjacency matrix, list, or object of class
@@ -43,6 +44,12 @@ units. The default is \code{NULL}.}
 \item{grouppopvec}{A vector of populations for some sub-group of
 interest. The default is \code{NULL}.}
 
+\item{nstartval_store}{The number of maps to sample from the preprocessing chain
+for use as starting values in future simulations. Default is 1.}
+
+\item{maxdist_startval}{The maximum distance from the starting map that
+sampled maps should be. Default is 100 (no restriction).}
+
 \item{maxiterrsg}{Maximum number of iterations for random seed-and-grow
 algorithm to generate starting values. Default is 5000.}
 
@@ -54,6 +61,9 @@ Default is \code{FALSE}.}
 
 \item{nthreads}{Number of parallel tasks to run, declared outside of the
 function. Default is \code{NULL}.}
+
+\item{log}{Whether to open a log to track progress for each parameter combination
+being tested. Default is FALSE.}
 
 \item{verbose}{Whether to print additional information about the tests.
 Default is \code{TRUE}.}

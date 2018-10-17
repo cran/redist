@@ -11,7 +11,11 @@ ecutsMPI <- function(procID = procID, params = params, adjobj = adjobj, popvec =
     ## Load redist library
     library(redist)
 
-    fname <- paste("log", procID, sep = "")
+    if(is.na(params$savename)){
+        fname <- paste0("log", procID)
+    }else{
+        fname <- paste0("log", procID, "_", params$savename)
+    }
     
     if(params$verbose){
         sink(fname)
@@ -101,6 +105,9 @@ ecutsMPI <- function(procID = procID, params = params, adjobj = adjobj, popvec =
     }else{
         savename <- params$savename
     }
+    if(sum(is.na(initcds)) == length(initcds)){
+        initcds <- NULL
+    }
 
     nthin <- params$nthin
     
@@ -137,7 +144,7 @@ ecutsMPI <- function(procID = procID, params = params, adjobj = adjobj, popvec =
     loopstart <- loopscompleted + 1
     
     for(i in loopstart:nloop){
-        
+
         if(adjswaps){
             nsimsAdj <- rep(freq,nsims/freq)
         }
@@ -610,6 +617,7 @@ redist.combine.mpi <- function(savename, nsims, nloop, nthin, nunits, tempadj){
     ## Save object ##
     #################
     save(algout, file = paste(savename, ".RData", sep = ""))
+    return(algout)
     
 }
 
@@ -807,6 +815,7 @@ redist.mcmc.mpi <- function(adjobj, popvec, nsims, ndists = NA, initcds = NULL,
     ###################
     ## Preprocessing ##
     ###################
+    
   
     ## Augment initcds if necessary
     nrow.init <- ifelse(is.null(initcds), 0, nrow(initcds))
@@ -852,7 +861,7 @@ redist.mcmc.mpi <- function(adjobj, popvec, nsims, ndists = NA, initcds = NULL,
                           contiguitymap = contiguitymap,verbose = verbose,
                           loopscompleted = loopscompleted,rngseed = rngseed,
                           savename = savename)
-
+    
     ##################
     ## Spawn Slaves ##
     ##################
