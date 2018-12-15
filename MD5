@@ -1,5 +1,5 @@
 e2f54da4a90d66d724595ac1d38c6eae *ChangeLog
-e13f6f0695b608455bbd2c9bd10ba69e *DESCRIPTION
+dd24d1bd1939430b34877eb9b55752f1 *DESCRIPTION
 a8bf394e1eacc1967c784484db7466e5 *NAMESPACE
 6480333718d01c2f0818a1e797028096 *R/RcppExports.R
 22d960ef7b83cc2f87404554bfdeade7 *R/data.R
@@ -37,7 +37,7 @@ cc6f28d5ee38e59881841e94187e458f *src/RcppExports.cpp
 10e9f9ecad1fd12e24a33682a363b8ef *src/check_contiguity.h
 fd1f008cb869384e39bb9c5d3b1e7a6b *src/constraint_calc_helper.cpp
 f2330fc0177818a4878b70d8ecb4256b *src/constraint_calc_helper.h
-6ecadc8d3961d84125c53d13c9a7e0b1 *src/enumerate.cpp
+ac52a899cc57e46a890ae64c9d0c6a9d *src/enumerate.cpp
 f1dc19aadd7122fcf016f4f034c83aec *src/make_swaps_helper.cpp
 6101ac79f7895c38b2b2423a303c66d5 *src/make_swaps_helper.h
 b31a573e62180e5a146762251cb37bb1 *src/redist_analysis.cpp
