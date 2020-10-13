@@ -1,6 +1,6 @@
 Package: redist
-Version: 2.0.1
-Date: 2020-09-09
+Version: 2.0.2
+Date: 2020-10-03
 Title: Simulation Methods for Legislative Redistricting
 Authors@R: c(
     person("Ben", "Fifield", email = "benfifield@gmail.com", role = c("aut", "cre")),
@@ -28,7 +28,7 @@ Suggests: testthat, Rmpi, knitr, rmarkdown, igraph
 LinkingTo: Rcpp, RcppArmadillo, RcppEigen, BH
 License: GPL (>= 2)
 SystemRequirements: gmp, libxml2, python
-Packaged: 2020-09-19 20:40:26 UTC; benfifield
+Packaged: 2020-10-04 16:33:44 UTC; benfifield
 NeedsCompilation: yes
 BugReports: https://github.com/kosukeimai/redist/issues
 RoxygenNote: 7.1.1
@@ -42,4 +42,4 @@ Author: Ben Fifield [aut, cre],
   Jun Kawahara [aut],
   Kosuke Imai [aut]
 Repository: CRAN
-Date/Publication: 2020-09-20 06:30:03 UTC
+Date/Publication: 2020-10-13 23:50:07 UTC

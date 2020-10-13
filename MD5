@@ -1,5 +1,5 @@
 e2f54da4a90d66d724595ac1d38c6eae *ChangeLog
-ac3c150ecd7716de49e241d047036554 *DESCRIPTION
+3d5a5678f43b34df4321b6994783a07d *DESCRIPTION
 f1ff4eadef49cd1a95369d054c5360c3 *NAMESPACE
 88550540481ae83ec2bd0101bea2430a *R/RcppExports.R
 59d0cc2f53fbcef13b65598a899c4132 *R/adjacency.R
@@ -14,7 +14,7 @@ b0ba68e2eaf4515658585ec93440f97e *R/diagplot.R
 d7ac2327cccbab6b12647023427bbc63 *R/map.R
 3295caa6af779f4b6aba8de518add0d3 *R/metrics.R
 be3109dc2d7f89dfdf7721f436ed473e *R/parity.R
-aa4df17954935dd3d3f1075011fedb1b *R/redist-package.R
+0ace8df74eed1c5753badb9a97c9fa9a *R/redist-package.R
 95e6851be9335c3b8b0432289857e299 *R/redist-smc.R
 9fabdc733d5a0890120ff0d0b2270658 *R/redist.R
 d7b7065878a7d6011c17d7cd50d0f7dd *R/redistMPI.R
@@ -96,7 +96,7 @@ b3e171a64d05365ca14e5fd06443663b *man/algdat.pfull.Rd
 352ec7f226a71159040649b41e1c64a9 *man/fl250.Rd
 550e3eb254f793050ed3105bf4aa8a4b *man/fl70.Rd
 718cf65f4c6e0fafa94938475618d1ac *man/is_last.Rd
-2c79731917040ae1335abd5a3fae70fa *man/redist-package.Rd
+ae31ef4f33a1742e6d22d78a79e83209 *man/redist-package.Rd
 d69905e7cbe4909d02be08bc295f1d35 *man/redist.adjacency.Rd
 20143e39d5f5e85169e455f6ecb46818 *man/redist.calc.frontier.size.Rd
 46e713812dc4ac49cca45dffdb6988fb *man/redist.combine.Rd
@@ -141,10 +141,10 @@ a55cfc2bf730fada7ee95daee4f0997c *src/distance_helpers.h
 389afd4809f93ecbfd289ec096cb25c3 *src/kirchhoff.h
 2f5aad6163611262f053bf5e23efa71a *src/make_swaps_helper.cpp
 6101ac79f7895c38b2b2423a303c66d5 *src/make_swaps_helper.h
-bcee2eb85e9cefa0fee36a94b55d3718 *src/map_calc.cpp
+25dc8f6509b6a250a65c45accd92693d *src/map_calc.cpp
 ae490d9e85f4e6e328a663d37490a8e4 *src/map_calc.h
 8aecf428b678f2032ad451b7833bdbb4 *src/metrics.cpp
-6701341f05f3adf6b6ee9c927534da6b *src/minkowski.cpp
+e601ebc1c9a4578efe40a636692c118f *src/minkowski.cpp
 b40669551ffe30aec92f3c11ae04436a *src/redist_analysis.cpp
 88b2a6ddaf9514400d48e6e8dff8f927 *src/redist_analysis.h
 c639bec1c7c71af93d9b4ee6a267b1af *src/redist_init.c
@@ -153,7 +153,7 @@ e067c5fd08accca6321a88739e06d5cd *src/redist_types.h
 208bf3f8af098b22e1c39b3878d43f1f *src/rsg.h
 2b88732cc131ef8d6f8d69f61e72059d *src/shatter_search.cpp
 46b46248afd7ba676817adcca08cf956 *src/shatter_search.h
-e78396b984bc9fed32dce48210d010c3 *src/smc.cpp
+490f71646468afc269200676042ce4be *src/smc.cpp
 16374487f3fa9aad2d197cd613ef9632 *src/smc.h
 6ec53ec4989f43175459f0da8239925b *src/smc_base.cpp
 f4eb063be229893efb836d9739431214 *src/smc_base.h
