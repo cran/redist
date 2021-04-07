@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Redistricting with Flip MCMC</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Redistricting with Flip MCMC</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(redist)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># set seed for reproducibility</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code></pre></div>
+<p>The <code>redist</code> package is designed to allow for replicable redistricting simulations. This vignette covers the Flip Markov Chain Monte Carlo method discussed in: <a href="https://www.tandfonline.com/doi/full/10.1080/10618600.2020.1739532">Automated Redistricting Simulation Using Markov Chain Monte Carlo</a>.</p>
+<div id="top" class="section level1">
+<h1>Table of Contents</h1>
+<ul>
+<li><a href="#mcmc">The Flip MCMC Algorithm</a></li>
+<li><a href="#strengths">Strengths of Flip</a></li>
+<li><a href="#init">Initializing Flip</a></li>
+<li><a href="#alg">Redistricting with Flip MCMC</a></li>
+<li><a href="#chains">Using Multiple Chains</a></li>
+<li><a href="#flip">Tidy Flip MCMC using redist_flip()</a></li>
+<li><a href="#diag">Diagnostic Plots</a></li>
+<li><a href="#tune">Tuning Flip Constraints</a></li>
+<li><a href="#final">Final Thoughts</a></li>
+</ul>
+</div>
+<div id="mcmc" class="section level1">
+<h1>The Flip MCMC Algorithm</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(fl25)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(fl25_enum)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>plan <span class="ot">&lt;-</span> fl25_enum<span class="sc">$</span>plans[, <span class="dv">7241</span>]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>adj <span class="ot">&lt;-</span> <span class="fu">redist.adjacency</span>(fl25)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">redist.flip</span>(<span class="at">adj =</span> adj, <span class="at">init_plan =</span> plan, <span class="at">total_pop =</span> fl25<span class="sc">$</span>pop, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">nsims =</span> <span class="dv">6</span>, <span class="at">pop_tol =</span> <span class="fl">0.10</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">constraint =</span> <span class="st">&#39;compact&#39;</span>, <span class="at">constraintweights =</span> <span class="fl">0.02</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">compactness_metric =</span> <span class="st">&#39;edges-removed&#39;</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.flip(): Automated Redistricting Simulation Using</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: inf</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 2</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 1.5</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 1.33333</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 1.25</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 1.2</span></span></code></pre></div>
+<p>The <code>flip</code> algorithm is one of the more straightforward redistricting algorithms. Beginning with an initial partition of a graph, it proposes flipping a node from one partition to an adjacent partition. By checking that the proposed flip meets basic constraints, such as keeping partitions contiguous and staying within a certain population parity, it ensures that all proposed new partitions are also valid partitions. The implementation within <code>redist</code> is a bit more advanced that this, as it allows for multiple flips and rejecting valid partitions based on a Metropolis Hastings algorithm. The following walks through the basics of this algorithm to provide an introduction to using <code>flip</code> correctly and efficiently.</p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Suppose we are redistricting this small map above on the left. To use the <code>flip</code> algorithm, we need to consider the adjacency graph that underlies this map, which is above on the right. Each of the 25 precincts on the left are displayed as a node on the right, connected if they are contiguous on the map. If we use the above district as an initial plan, we can then run <code>flip</code> for a few steps.</p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>While this map is extremely small, the five iterations give a basic idea of what is going on behind the scenes. At each iteration, it searches the boundary for possible swaps, selects one, and then accepts or rejects the proposals. With very weak constraints, like those used to create the above example, almost every swap is accepted. Even then, though, it doesn’t guarantee that some iterations won’t repeat other plans sampled. In fact, in the above, the second iteration is the same plan as the initialization.</p>
+<p>This possibility is very important for ensuring that the sampled plans are representative of the desired target distribution, which is controlled by the constraints chosen. The possible constraints are discussed below, as is information on setting up simulations and some advice on ensuring that your simulations are efficient.</p>
+<p><a href="#top">Back to top</a></p>
+</div>
+<div id="strengths" class="section level1">
+<h1>Strengths of Flip</h1>
+<p>Flip is incredibly powerful for local exploration. If you can make large changes to a summary statistic of interest without making large changes to the map itself, this may tell an important story of what went into making the map.</p>
+<p>Flip is one of the easiest to understand algorithms <em>and</em> has theoretical guarantees behind it. This can make it especially useful when the audience of interest does not have an advanced background in mathematics or statistics.</p>
+<p>Flip has the power to make less compact maps than many other algorithms. This can be especially powerful when a blind allegiance to compactness makes otherwise viable plans appear to be outliers.</p>
+<p>Our implementation of <code>flip</code> has many more Gibbs constraints than our other implementations. This can allow you to consider different forms of <code>partisan</code> and <code>countysplit</code> constraints among others.</p>
+<p>However, with these strengths do come weaknesses. Like most Markov Chain Monte Carlo methods, convergence can’t be shown, it can only be suggested. Diagnostics, like those in the <a href="#diag">section on diagnostic plots</a>, can help ensure that convergence is likely, but can never show that it has indeed happened. Additionally, <code>flip</code> makes relatively small moves per iteration, so many more iterations are needed to move around the space. If your map is particularly large, you may require several hundred iterations to make the map substantively different, which leads to <code>thinning</code> the chain, which is dropping many sequential iterations. However, <code>thinning</code> doesn’t make the algorithm more efficient, so you still need to work through those plans, which comes with a time cost.</p>
+</div>
+<div id="init" class="section level1">
+<h1>Initializing Flip</h1>
+<p>One of the keys to ensuring good performance is the choice of initialization. In some cases, a starting point may be obvious, such as when you want to explore the local area around an existing map. If that’s the use case, then it is straightforward to use that plan as the starting point. However, if the goal is to understand the larger space of possibilities, then starting from just one map can be misleading. Why? Since constraint tuning is not a perfect science, you could be setting the constraints too strong and, if that map is very good on some dimension, the <code>flip</code> algorithm may have difficulty getting away from that point without a very large number of iterations.</p>
+<p>Our implementation defaults to using the Sequential Monte Carlo (<code>SMC</code>)algorithm via <code>redist.smc()/redist_smc()</code> to create an initial partition of the districts, if no district is provided.</p>
+<p>While the implementations of Random Seed and Grow (<code>RSG</code>) and Compact Random Seed and Grow (<code>CRSG</code>) via <code>redist.rsg()</code> and <code>redist.crsg</code> do not sample from a defined target distribution, they can serve as <em>useful</em> initializations for <code>flip</code> as they help provide a more diverse set of starting states. <code>SMC</code> is often faster and provides more theoretical guarantees, but tends to sample very compact districts, even when decreasing the compactness constraint. As such, when trying to decide if chains have likely converged or not, it can be misleading to only check chains that start from very compact states.</p>
+</div>
+<div id="alg" class="section level1">
+<h1>Redistricting with Flip MCMC</h1>
+<p>With the basics of what the <code>flip</code> algorithm is doing down, we can proceed into how to use the algorithm.</p>
+<p>There are currently two ways to use <code>flip</code> within the <code>redist</code> package: via the standard interface (<code>redist.flip</code>) or via the tidy interface (<code>redist_flip</code>). This section covers the basics using the former. See the <a href="#tidy">section on the tidy interface</a> below and the <code>tidy</code> vignette for more information.</p>
+<p>To begin running the MCMC algorithm, we have to provide some basic information, typically beginning with a shapefile. The below loads an Iowa dataset included within the <code>redist</code> package and plots the actual congressional districts from 2012-2021. (Iowa is a favorite choice for redistricting simulation examples, as it requires keeping counties together in plans which allows us to use the counties as the unit for redistricting, rather than thousands of precincts.)</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iowa)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.plot.map</span>(iowa, <span class="at">plan =</span> cd_2010)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>From there, we need to build an adjacency graph which identifies which counties are touching which other counties on a map. If you have an existing plan, it’s generally advised to supply this to the optional <code>plan</code> argument to ensure that the existing plan is a valid, connected plan. If you get a warning, the <a href="https://christopherkenny.github.io/geomander/">geomander R package</a> can help solve potential issues.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>adj <span class="ot">&lt;-</span> <span class="fu">redist.adjacency</span>(<span class="at">shp =</span> iowa, <span class="at">plan =</span> iowa<span class="sc">$</span>cd_2010)</span></code></pre></div>
+<p>In addition, we need population for each unit. We’ve included <code>iowa$pop</code> as the total population as of the 2010 Census. From there, we have the basic information that we need to run our first simulation. The below indicates that we are simulating 1000 plans (with <code>nsims</code>) for the state of Iowa that have at most a population parity deviation of 0.05 (with <code>pop_tol</code>).</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">redist.flip</span>(<span class="at">adj =</span> adj, <span class="at">total_pop =</span> iowa<span class="sc">$</span>pop, <span class="at">init_plan =</span> iowa<span class="sc">$</span>cd_2010,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">nsims =</span> <span class="dv">1000</span>, <span class="at">pop_tol =</span> <span class="fl">0.05</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.flip(): Automated Redistricting Simulation Using</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.929293</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.939698</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.956522</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.967419</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.965932</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.96828</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.964235</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.964956</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.963293</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.962963</span></span></code></pre></div>
+<p>The printed output can be silenced by setting <code>verbose = FALSE</code>, however it displays very important information. First, it displays when preprocessing begins and when the algorithm actually starts. Each 10% of the way through the <code>flip</code> algorithm, it outputs the current estimated Metropolis acceptance. Here, we’ve specified no Gibbs constraints, so the acceptance will always be near 100%.</p>
+<p>The output is an object of class <code>redist</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sims)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;redist&quot;</span></span></code></pre></div>
+<p>The <code>sims</code> object includes various pieces of information that were tracked while simulating, but we focus on <code>sims$plans</code>, which is a matrix that contains the plans.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sims<span class="sc">$</span>plans)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]   99 1000</span></span></code></pre></div>
+<p>Checking the dimensions shows that each plan is saved as a column, where each row is a precinct. From this, we can extract a single plan as we would from a normal matrix, like below, where we plot the final simulated plan.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.plot.map</span>(<span class="at">shp =</span> iowa, <span class="at">plan =</span> sims<span class="sc">$</span>plans[, <span class="dv">1000</span>])</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Now, this plan is incredibly non-compact, which can be an issue. However, we should expect this type of outcome, as we didn’t include a compactness constraint while simulating. Thus, the only things checked were contiguity and that no plan would be outside of the <code>pop_tol</code> set above. Since there are many more non-compact plans than compact plans in the space of all redistricting plans, we end up with highly non-compact districts. We can fix this by specifying a constraint, as below:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sims_comp <span class="ot">&lt;-</span> <span class="fu">redist.flip</span>(<span class="at">adj =</span> adj, <span class="at">total_pop =</span> iowa<span class="sc">$</span>pop, <span class="at">init_plan =</span> iowa<span class="sc">$</span>cd_2010,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">nsims =</span> <span class="dv">1000</span>, <span class="at">pop_tol =</span> <span class="fl">0.05</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">constraint =</span> <span class="st">&#39;compact&#39;</span>, <span class="at">constraintweights =</span> <span class="fl">0.4</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">compactness_metric =</span> <span class="st">&#39;edges-removed&#39;</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.flip(): Automated Redistricting Simulation Using</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.474747</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.432161</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.501672</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.516291</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.486974</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.490818</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.492132</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.494368</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.489433</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.484484</span></span></code></pre></div>
+<p>The first arguments as the same, but this adds three key arguments. First, setting <code>constraint</code> to any combination of the nine implemented constraints allows us to specify the target distribution. Setting <code>constraintweights = 0.4</code> means that we want to put a relatively weak weight on the compactness, though a weak constraint still does a lot of work. There are four <code>compact</code> constraints implemented currently. The recommended is to use <code>edges-removed</code> because it can be calculated very quickly.</p>
+<p>If we plot the final map sampled from the above code, we can see that it is <em>far more</em> compact.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.plot.map</span>(<span class="at">shp =</span> iowa, <span class="at">plan =</span> sims_comp<span class="sc">$</span>plans[, <span class="dv">1000</span>])</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><a href="#top">Back to top</a></p>
+</div>
+<div id="chains" class="section level1">
+<h1>Using Multiple Chains</h1>
+<p>When running larger redistricting analyses, one important step is to run multiple chains of the MCMC algorithm. This will also allow us to diagnose convergence better, using the Gelman-Rubin plot, as seen in the section on <a href="#diag">Diagnostic Plots</a>.</p>
+<p>On Windows and in smaller capacities, it is useful to run the algorithm within an <code>lapply</code> loop. First, we set up the seed for replicability and decide on the number of chains and simulations.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>nchains <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>nsims <span class="ot">&lt;-</span> <span class="dv">2000</span></span></code></pre></div>
+<p>Here, we opt to initialize using the <code>RSG</code> algorithm, though the default is to use the <code>SMC</code> algorithm. When we want to initialize without providing an initial partition, we need to specify the number of districts, <code>ndists</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>flip_chains <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>nchains, <span class="cf">function</span>(x){</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">redist.flip</span>(<span class="at">adj =</span> adj,  <span class="at">total_pop =</span> iowa<span class="sc">$</span>pop, <span class="at">pop_tol =</span> <span class="fl">0.05</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">nsims =</span> nsims, <span class="at">init_plan =</span> <span class="st">&#39;rsg&#39;</span>, <span class="at">ndists =</span> <span class="dv">4</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">constraint =</span> <span class="st">&#39;compact&#39;</span>, <span class="at">constraintweights =</span> <span class="fl">0.4</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">compactness_metric =</span> <span class="st">&#39;edges-removed&#39;</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+<p>In Unix-based systems, this can be run considerably faster by running this in parallel.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mcmc_chains <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">mclapply</span>(<span class="dv">1</span><span class="sc">:</span>nchains, <span class="cf">function</span>(x){</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">redist.flip</span>(<span class="at">adjobj =</span> adjlist,  <span class="at">popvec =</span> fl25<span class="sc">$</span>pop, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">nsims =</span> nsims, <span class="at">ndists =</span> <span class="dv">3</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>}, <span class="at">mc.set.seed =</span> <span class="dv">1</span>, <span class="at">mc.cores =</span> parallel<span class="sc">::</span><span class="fu">detectCores</span>())</span></code></pre></div>
+<p><a href="#top">Back to top</a></p>
+</div>
+<div id="tidy" class="section level1">
+<h1>Tidy Flip MCMC using <code>redist_flip()</code></h1>
+<p>The new, tidy interface to functions with <code>redist</code> introduces a pair of key objects, <code>redist_map</code> and <code>redist_plans</code>. The <a href="redist.html">Get Started page</a> goes into depth about these, but this shows the basics of how to work with the <code>flip</code> algorithm within the newer interface.</p>
+<p>As in the standard interface, we need a data set to work with. This example will also follow with using the included Iowa data.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iowa)</span></code></pre></div>
+<p>Rather than building the adjacency graph manually, here we can set this up using <code>redist_map</code> which will build it an add it as a column.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>iowa_map <span class="ot">&lt;-</span> <span class="fu">redist_map</span>(iowa, <span class="at">existing_plan =</span> cd_2010, <span class="at">pop_tol=</span><span class="fl">0.01</span>)</span></code></pre></div>
+<p>We set a population tolerance of 1%. While this is generally a good population parity tolerance for most simulations, be careful when using the default within <code>flip</code>. If your starting partition sits outside of that population deviation, <code>flip</code> may take a <strong>very, very</strong> long time to find a valid partition to flip.</p>
+<p>Now, we can pass the <code>redist_map</code> object to <code>redist_flip</code> to begin simulating.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tidy_sims <span class="ot">&lt;-</span> iowa_map <span class="sc">%&gt;%</span> <span class="fu">redist_flip</span>(<span class="at">nsims =</span> <span class="dv">1000</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.mcmc(): Automated Redistricting Simulation Using</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.626263</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.512563</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.508361</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.516291</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.52505</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.525876</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.506438</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.513141</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.508343</span></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.506507</span></span></code></pre></div>
+<p>This highlights a key difference between the <code>redist_flip</code> and <code>redist.flip</code> implementations: <code>redist_flip</code> appears to have a much lower acceptance rate, even though we didn’t explicitly set any constraints. Why? <code>redist_flip</code>’s constraint includes a relatively weak compactness constraint by default because simulating compact maps is far more efficient and completely non-compact maps are not super useful for most purposes.</p>
+<p>You can override this using the <code>flip_constraints_helper()</code> function to set up a blank set of constraints.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>cons <span class="ot">&lt;-</span> <span class="fu">flip_constraints_helper</span>(iowa_map, <span class="at">constraint =</span> <span class="cn">NULL</span>)</span></code></pre></div>
+<p>Then, you can pass this to <code>redist_flip</code>.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>tidy_sims_no_comp <span class="ot">&lt;-</span> iowa_map <span class="sc">%&gt;%</span> <span class="fu">redist_flip</span>(<span class="at">nsims =</span> <span class="dv">1000</span>, <span class="at">constraints =</span> cons)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.mcmc(): Automated Redistricting Simulation Using</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.949495</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.939698</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.93311</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.929825</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.931864</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.9399</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.944206</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.949937</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.951057</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.953954</span></span></code></pre></div>
+<p>This increases the acceptance ratio to near 100% again. The function <code>flip_constraints_helper()</code> is useful for setting up any constraints to be used with <code>redist_flip</code>. For example, if we want to set up a compactness constraint and a <code>similarity</code> constraint (which is the <code>flip</code> status quo constraint), we can do so as follows:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cons <span class="ot">&lt;-</span> <span class="fu">flip_constraints_helper</span>(<span class="at">map =</span> iowa_map, <span class="at">constraint =</span> <span class="fu">c</span>(<span class="st">&#39;compact&#39;</span>, <span class="st">&#39;similarity&#39;</span>),</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">constraintweight =</span> <span class="fu">c</span>(<span class="fl">0.6</span>, <span class="dv">1</span>), <span class="at">init_plan =</span> cd_2010)</span></code></pre></div>
+<p>From there, we can again pass this to <code>redist_flip</code></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>tidy_sims_sq_comp <span class="ot">&lt;-</span> iowa_map <span class="sc">%&gt;%</span> <span class="fu">redist_flip</span>(<span class="at">nsims =</span> <span class="dv">1000</span>, <span class="at">constraints =</span> cons)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.mcmc(): Automated Redistricting Simulation Using</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.606061</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.572864</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.588629</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.536341</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.513026</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.495826</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.486409</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.480601</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.489433</span></span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.500501</span></span></code></pre></div>
+<p>The output from <code>redist_flip</code> differs a bit from the output of <code>redist.flip</code>. It outputs a <code>redist_plans</code> object.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(tidy_sims)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;redist_plans&quot; &quot;tbl_df&quot;       &quot;tbl&quot;          &quot;data.frame&quot;</span></span></code></pre></div>
+<p>To extract the plans, use <code>get_plans_matrix().</code></p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>plans <span class="ot">&lt;-</span> <span class="fu">get_plans_matrix</span>(tidy_sims)</span></code></pre></div>
+<p>Alternatively, you can directly use functions on the <code>redist_plans</code> object. For example, if we want to measure the competitiveness of each plan:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>tidy_sims <span class="ot">&lt;-</span> tidy_sims <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">competitiveness =</span> <span class="fu">competitiveness</span>(<span class="at">map =</span> iowa_map, <span class="at">rvote =</span> rep_08, <span class="at">dvote =</span> dem_08))</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>tidy_sims <span class="sc">%&gt;%</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> competitiveness)) <span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>For more information on using <code>redist_plans</code> objects, see the <a href="redist.html">Get Started page</a>.</p>
+<p><a href="#top">Back to top</a></p>
+</div>
+<div id="diag" class="section level1">
+<h1>Diagnostic Plots</h1>
+<p>When using the MCMC algorithms, there are various useful diagnostic plots. The <code>redist.diagplot</code> function creates familiar plots by converting numeric entries into <code>mcmc</code> objects to use with <code>coda</code>.</p>
+<p>We use the dissimilarity index in Massey and Denton 1988 as a summary statistic for the following examples. This can be computed with <code>segregation_index</code> or <code>redist.segcalc</code>. In this case, we create a Republican dissimilarity index. We can work with two examples, the first is a single vector of the segregation index, while the second is a list of vectors, with one vector for each chain.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>seg <span class="ot">&lt;-</span> <span class="fu">redist.segcalc</span>(<span class="at">plans =</span> <span class="fu">get_plans_matrix</span>(tidy_sims), </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">group_pop =</span> iowa_map<span class="sc">$</span>rep_08,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">total_pop =</span> iowa_map<span class="sc">$</span>pop)</span></code></pre></div>
+<p>The first three plots only need a single index.</p>
+<ul>
+<li>Autocorrelation Plot</li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.diagplot</span>(seg, <span class="at">plot =</span> <span class="st">&quot;autocorr&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ul>
+<li>Density Plot</li>
+</ul>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.diagplot</span>(seg, <span class="at">plot =</span> <span class="st">&quot;densplot&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ul>
+<li>Mean Plot</li>
+</ul>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.diagplot</span>(seg, <span class="at">plot =</span> <span class="st">&quot;mean&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>As examples for the next two plots, we can use the example above which ran 4 chains. This is the same index, but computed for each chain.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>seg_chains <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>nchains, </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">function</span>(i){<span class="fu">redist.segcalc</span>(<span class="at">algout =</span> flip_chains[[i]], </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                                                <span class="at">group_pop =</span> iowa_map<span class="sc">$</span>rep_08,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                                                <span class="at">total_pop =</span> iowa_map<span class="sc">$</span>pop)})</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: &#39;algout&#39; is deprecated.</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Use &#39;plans&#39; instead.</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; See help(&quot;Deprecated&quot;)</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: &#39;algout&#39; is deprecated.</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Use &#39;plans&#39; instead.</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; See help(&quot;Deprecated&quot;)</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: &#39;algout&#39; is deprecated.</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Use &#39;plans&#39; instead.</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; See help(&quot;Deprecated&quot;)</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: &#39;algout&#39; is deprecated.</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Use &#39;plans&#39; instead.</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; See help(&quot;Deprecated&quot;)</span></span></code></pre></div>
+<ul>
+<li>Trace Plot</li>
+</ul>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.diagplot</span>(<span class="at">sumstat =</span> seg_chains, <span class="at">plot =</span> <span class="st">&quot;trace&quot;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<ul>
+<li>Gelman Rubin Plot</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.diagplot</span>(<span class="at">sumstat =</span> seg_chains, <span class="at">plot =</span> <span class="st">&#39;gelmanrubin&#39;</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><a href="#top">Back to top</a></p>
+</div>
+<div id="tune" class="section level1">
+<h1>Tuning Flip Constraints</h1>
+<p>When using the <code>flip</code> algorithm, the most important and difficult step is setting the right constraint weights. While there may be some general pieces of advice for doing so, no advice can replace working with your data. The bottom line is that every data set is a bit different. What works for one state’s redistricting process, with the data specific to that state at that time may not transfer to another state or municipality or school district. The general process of finding what works might be very similar, but getting the right set of constraint weights and other parameters will vary immensely. Even starting from a different plan within the same time and place can change the weights that perform best. Like most things, the key to tuning <code>flip</code> is patience. Going for a full scale simulation without testing some parameter configurations is likely an inefficient use of time and computing power.</p>
+<p>The following highlights some advice on how to tune <code>flip</code> to make it work for your particular redistricting problem. For the advice, we’ll use the following example:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iowa)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>iowa_map <span class="ot">&lt;-</span> <span class="fu">redist_map</span>(iowa, <span class="at">existing_plan =</span> cd_2010, <span class="at">pop_tol =</span> <span class="fl">0.02</span>, <span class="at">total_pop =</span> pop)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>cons <span class="ot">&lt;-</span> <span class="fu">flip_constraints_helper</span>(<span class="at">map =</span> iowa_map, <span class="at">constraint =</span> <span class="fu">c</span>(<span class="st">&#39;compact&#39;</span>, <span class="st">&#39;population&#39;</span>),</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">constraintweight =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">100</span>))</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">redist_flip</span>(<span class="at">map =</span> iowa_map,  <span class="at">nsims =</span> <span class="dv">2500</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.mcmc(): Automated Redistricting Simulation Using</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.345382</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.324649</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.313752</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.31031</span></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.293034</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.284189</span></span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.275586</span></span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.28014</span></span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.280569</span></span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.280512</span></span></code></pre></div>
+<div id="acceptance-ratios" class="section level2">
+<h2>Acceptance Ratios</h2>
+<p>One of the first things to check when working with <code>flip</code> is the Metropolis Hastings ratio. It is printed to the console when <code>verbose = TRUE</code>. If you have silenced printing or warnings, the output saves the Metropolis Hastings decisions. You can check the acceptance ratio in a <code>redist_plans</code> object with</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sims<span class="sc">$</span>mhdecisions, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.2804</span></span></code></pre></div>
+<p>Reference plans included in the object will not have an <code>mhdecision</code>, so you can remove them with <code>na.rm = TRUE</code>.</p>
+<p>The goal is to generally have the Metropolis Hastings ratio lie between 20% and 40%. If simulating with only a single parameter, the goal is generally to be near 40%, while with many parameters, you likely want to be near 20%. If over the course of many simulations you find yourself just above or just below, that probably isn’t a problem if the simulations are in the right probability space.</p>
+</div>
+<div id="lambda-and-eprob" class="section level2">
+<h2><code>lambda</code> and <code>eprob</code></h2>
+<p><code>lambda</code> and <code>eprob</code> both control the amount of movement within <code>flip</code>. They can be very powerful things to increase. <code>lambda</code> defaults to 0, while <code>eprob</code> defaults to 0.05. Each of these parameters leads to fairly small movements between sequential iterations of the algorithm.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>sims_new <span class="ot">&lt;-</span> <span class="fu">redist_flip</span>(<span class="at">map =</span> iowa_map, <span class="at">nsims =</span> <span class="dv">2500</span>, <span class="at">pop_tol =</span> <span class="fl">0.02</span>,</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">constraints =</span> cons, <span class="at">eprob =</span> <span class="fl">0.10</span>, <span class="at">lambda =</span> <span class="dv">2</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sims_new<span class="sc">$</span>mhdecisions, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.1976</span></span></code></pre></div>
+<p>In this example, we’ve increased each of these. <code>lambda = 2</code>, up from its default of 0, while <code>eprob = 0.10</code>, up from its default of <code>0.05</code>. What’s going on here can characterized fairly well by the Hamming distance between sequential runs.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>dists <span class="ot">&lt;-</span> <span class="fu">redist.distances</span>(<span class="at">plan =</span> <span class="fu">get_plans_matrix</span>(sims))<span class="sc">$</span>Hamming</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>dists_new <span class="ot">&lt;-</span> <span class="fu">redist.distances</span>(<span class="at">plans =</span> <span class="fu">get_plans_matrix</span>(sims_new))<span class="sc">$</span>Hamming</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>adj_dists <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_integer_</span>, <span class="dv">2499</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>adj_dists_new <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="cn">NA_integer_</span>, <span class="dv">2499</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2499</span>){</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  adj_dists[i] <span class="ot">&lt;-</span> dists[i, i <span class="sc">+</span> <span class="dv">1</span>]</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  adj_dists_new[i] <span class="ot">&lt;-</span> dists_new[i, i <span class="sc">+</span> <span class="dv">1</span>]</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tibble</span>(<span class="at">Hamming =</span> <span class="fu">c</span>(adj_dists, adj_dists_new), </span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">lambda/eprob</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&#39;0/0.05&#39;</span>, <span class="dv">2499</span>), <span class="fu">rep</span>(<span class="st">&#39;2/0.10&#39;</span>, <span class="dv">2499</span>))) <span class="sc">%&gt;%</span> </span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">x =</span> Hamming, <span class="at">color =</span> <span class="st">`</span><span class="at">lambda/eprob</span><span class="st">`</span>)) <span class="sc">+</span> </span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p><code>lambda</code> controls the number of components swapped between each iterations, while <code>eprob</code> controls the size of the swapped partitions. Increasing each of this values can be important for increasing the amount of movement between outputted plans. These can be adjusted automatically using <code>adapt_lambda</code> and <code>adapt_lambda</code> when starting a simulation, though adjusting them manually to fit your problem is better practice, as it leads to more control over the process.</p>
+</div>
+<div id="adjusting-pop_tol" class="section level2">
+<h2>Adjusting <code>pop_tol</code></h2>
+<p>Sometimes a starting map sits in a neighborhood of maps that isn’t very conducive to using it as a starting point. This is most often characterized by running a single iteration that runs (seemingly) forever. A typical fix for this is to weaken the population tolerance and use a Gibbs constraint to pull the simulations back into the target range. I’ve done this for the tuning example, even though it’s unnecessary.</p>
+<p>After simulating, if there is a hard constraint to consider, we can check the parities:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> sims <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">par =</span> <span class="fu">plan_parity</span>(<span class="at">map =</span> iowa_map))</span></code></pre></div>
+<p>And then we can subset to the correct space.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> sims <span class="sc">%&gt;%</span> <span class="fu">filter</span>(par <span class="sc">&lt;=</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<p>With the right set of parameters, this will lead to a reasonable set of simulations. In this case, we end up with about 10% of the simulations when using a soft constraint, which is not uncommon. In general, you want to aim for as low as a hard population parity as possible, while using a strong weight on the Gibbs population when the hard constraint is above what’s necessary. This helps maximize the efficiency of your simulations, while allowing for additional movement between neighborhoods of valid plans.</p>
+</div>
+<div id="balancing-multiple-constraints" class="section level2">
+<h2>Balancing Multiple Constraints</h2>
+<p>More often than not, there are multiple constraints that are important to a redistricting problem. There are two general paths to success when working with more than one or two constraints.</p>
+<p>First, you might want to add one at a time, generally starting with the compactness constraint. If <code>flip</code> doesn’t consider compactness at all, it has an unfortunate behavior of creating incredibly non-compact maps. However, with even a very weak compactness constraint, it performs very well in avoiding those maps that are so non-compact that they aren’t worthy of consideration. Then you can add the next constraints once at a time, weakening them a bit each time you add a new constraint. As above, you want to make sure that your acceptance rate is between 20% and 40%. If it’s too low, you won’t get sufficient movement around the probability space and if it’s too high, you likely aren’t characterizing the probability space you want to characterize.</p>
+<p>The other way to tune is to run a simulation with a kitchen sink type set up.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>cons <span class="ot">&lt;-</span> <span class="fu">flip_constraints_helper</span>(<span class="at">map =</span> iowa_map,</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">constraint =</span> <span class="fu">c</span>(<span class="st">&#39;compact&#39;</span>, <span class="st">&#39;population&#39;</span>, <span class="st">&#39;partisan&#39;</span>, <span class="st">&#39;countsplit&#39;</span>),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">constraintweight =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="dv">50</span>, <span class="dv">10</span>, <span class="dv">10</span>),</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">counties =</span> name, </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">rvote =</span> iowa<span class="sc">$</span>rep_08, <span class="at">dvote =</span> iowa<span class="sc">$</span>dem_08)</span></code></pre></div>
+<p>Then we can run this for a relatively small number of iterations.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">redist_flip</span>(iowa_map, <span class="dv">2000</span>, <span class="at">constraints =</span> cons)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.mcmc(): Automated Redistricting Simulation Using</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.849246</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.862155</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.87813</span></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.881101</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.877878</span></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.873228</span></span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.87777</span></span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.88055</span></span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.882713</span></span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.88094</span></span></code></pre></div>
+<p>Now, the interesting this here is that adding more constraints actually increased the acceptance probability. This is because correlated constraints can guide the algorithm towards high probability neighborhoods where there are multiple maps which could be considered! To address this, we might want to increase the constraint weight slightly across the board. Had the weights been far too low, we might lower them, particularly on constraints that we are not too worried about.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>cons <span class="ot">&lt;-</span> <span class="fu">flip_constraints_helper</span>(<span class="at">map =</span> iowa_map,</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">constraint =</span> <span class="fu">c</span>(<span class="st">&#39;compact&#39;</span>, <span class="st">&#39;population&#39;</span>, <span class="st">&#39;partisan&#39;</span>, <span class="st">&#39;countsplit&#39;</span>),</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">constraintweight =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="dv">100</span>, <span class="dv">40</span>, <span class="dv">20</span>),</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">counties =</span> name, </span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">rvote =</span> iowa<span class="sc">$</span>rep_08, <span class="at">dvote =</span> iowa<span class="sc">$</span>dem_08)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">redist_flip</span>(iowa_map, <span class="dv">2000</span>, <span class="at">constraints =</span> cons)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.mcmc(): Automated Redistricting Simulation Using</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          Markov Chain Monte Carlo</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Preprocessing data.</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Starting swMH().</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 percent done.</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.18593</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 20 percent done.</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.137845</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 30 percent done.</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.131886</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 40 percent done.</span></span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.158949</span></span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50 percent done.</span></span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.181181</span></span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-30"><a href="#cb40-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 60 percent done.</span></span>
+<span id="cb40-31"><a href="#cb40-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.154295</span></span>
+<span id="cb40-32"><a href="#cb40-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-33"><a href="#cb40-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 70 percent done.</span></span>
+<span id="cb40-34"><a href="#cb40-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.142244</span></span>
+<span id="cb40-35"><a href="#cb40-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-36"><a href="#cb40-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 80 percent done.</span></span>
+<span id="cb40-37"><a href="#cb40-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.13571</span></span>
+<span id="cb40-38"><a href="#cb40-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-39"><a href="#cb40-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 90 percent done.</span></span>
+<span id="cb40-40"><a href="#cb40-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.139522</span></span>
+<span id="cb40-41"><a href="#cb40-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb40-42"><a href="#cb40-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 100 percent done.</span></span>
+<span id="cb40-43"><a href="#cb40-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Metropolis acceptance ratio: 0.14057</span></span></code></pre></div>
+<p>For example, this new set of constraints might be a good place to simulate at.</p>
+<p>Notably, the process of tuning should be guided by the constraint outputs and their relative values. The average compactness value of edges removed that we’re constraining on has a summary like the following:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sims<span class="sc">$</span>constraint_compact, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s </span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   66.00   66.00   66.00   68.71   70.00   94.00       4</span></span></code></pre></div>
+<p>The population constraint can be summarized as:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sims<span class="sc">$</span>constraint_population, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA&#39;s </span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.000055 0.014977 0.022121 0.019121 0.023430 0.027085        4</span></span></code></pre></div>
+<p>These are measured on completely different scales, so it shouldn’t be surprising that population has a much higher weight. This is a constant difficulty in tuning, as the total number of edges on a graph or the volatility of the population isn’t something that’s easily standardized and transferred between maps, unfortunately.</p>
+<p><a href="#top">Back to top</a></p>
+</div>
+</div>
+<div id="final" class="section level1">
+<h1>Some Final Thoughts</h1>
+<p>Redistricting simulation is very much statistics rather than hard science. When working with <code>flip</code>, or any redistricting sampler, there will be a component that resembles art. Each important variable needs to be included, but getting every variable to the correct target space is not necessarily easy. In general, it may be best to start with one or two constraints and slowly add them to the model. This can help ensure that one single constraint doesn’t dominate the entire process.</p>
+<p>When starting off, it’s never a bad idea to run a single simulation to make sure that everything works. If it doesn’t do what you’re expecting, that’s much better than waiting for 1,000,000 iterations to run. If that works, try 100 or 1000. Only once you’ve seen that it’s moving and appears to be moving in reasonable directions should you try for those large numbers of simulations. Remember that running 1,000,000 steps of <code>flip</code> with completely useless parameters is not a very good use of time or computing power.</p>
+<p>And finally, when in doubt, it never hurts to run a few extra simulations. Once you know that the code is working, it shouldn’t cost much at all to run just a few extra iterations or a few simulations from new starting points. If the results agree with your prior findings, that’s more support for them. If they disagree, then you know what could be wrong and can run even more additional simulations to figure out what’s right!</p>
+<p><a href="#top">Back to top</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

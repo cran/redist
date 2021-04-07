@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <limits>
 #include <RcppArmadillo.h>
 #include "redist_types.h"
 
@@ -22,6 +23,11 @@ extern std::uniform_real_distribution<double> unif;
  * Generate a uniform random integer in [0, max).
  */
 int rint(int max);
+
+/*
+ * Generate a random integer in [0, max) according to weights.
+ */
+int rint(int max, vec cum_wgts);
 
 /*
  * Get the index of the k-th smallest element of x

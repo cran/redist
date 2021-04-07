@@ -2,8 +2,9 @@
 % Please edit documentation in R/data.R
 \name{fl250}
 \alias{fl250}
-\title{Florida 250 Precinct File}
-\format{sf data.frame containing columns for useful data related to the 
+\title{Florida 250 Precinct Shape File}
+\format{
+sf data.frame containing columns for useful data related to the
 redistricting process, subsetted from real data in Florida, and sf geometry column.
 \describe{
 \item{\code{geoid}}{ Contains unique identifier for each precinct which can be matched to the full Florida dataset.}
@@ -18,12 +19,17 @@ redistricting process, subsetted from real data in Florida, and sf geometry colu
 \item{\code{BlackVAP}}{ Contains the voting age population of black constituents of each precinct.}
 \item{\code{HispVAP}}{ Contains the voting age population of hispanic constituents of each precinct.}
 \item{\code{geometry}}{ Contains sf geometry of each precinct.}
-}}
+}
+}
 \usage{
 data("fl250")
 }
 \description{
 This data set contains the 250 Precinct shapefile and related data for each precinct.
+}
+\details{
+It is a random 70 precinct connected subset from Florida's precincts. This was introduced by
+<doi: 10.1080/2330443X.2020.1791773>
 }
 \examples{
 \dontrun{
@@ -31,8 +37,8 @@ data(fl250)
 }
 }
 \references{
-Fifield, Benjamin, Michael Higgins, Kosuke Imai and Alexander Tarr.
-(2016) "A New Automated Redistricting Simulator Using Markov Chain Monte Carlo."
-Working Paper. Available at
-\url{http://imai.princeton.edu/research/files/redist.pdf}.
+Benjamin Fifield, Kosuke Imai, Jun Kawahara & Christopher T. Kenny (2020)
+The Essential Role of Empirical Validation in Legislative Redistricting Simulation,
+Statistics and Public Policy, 7:1, 52-68, DOI: 10.1080/2330443X.2020.1791773
 }
+\concept{data}

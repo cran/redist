@@ -4,24 +4,18 @@
 \name{redist-package}
 \alias{redist-package}
 \alias{redist}
-\title{Markov Chain Monte Carlo Methods for Redistricting Simulation}
+\title{Simulation Methods for Legislative Redistricting}
 \description{
-Enables researchers to sample redistricting plans from a pre-specified
-target distribution using a Markov Chain Monte Carlo algorithm. The package
-allows for the implementation of various constraints in the redistricting
-process such as geographic compactness and population parity requirements.
-The algorithm also can be used in combination with efficient simulation
-methods such as simulated and parallel tempering algorithms. Tools for
-analysis such as inverse probability reweighting and plotting functionality
-are included. The package implements methods described in Fifield, Higgins,
-Imai and Tarr (2016) ``A New Automated Redistricting Simulator Using Markov
-Chain Monte Carlo,'' working paper available at
-<http://imai.fas.harvard.edu/research/files/redist.pdf>.
-}
-\details{
-\tabular{ll}{ Package: \tab redist\cr Type: \tab Package\cr
-Version: \tab 2.0.2\cr
-Date: \tab 2020-10-03\cr License: \tab GPL (>= 2)\cr }
+Enables researchers to sample redistricting plans from a pre-specified target
+distribution using Sequential Monte Carlo and Markov Chain Monte Carlo
+algorithms.  The package allows for the implementation of various constraints
+in the redistricting process such as geographic compactness and population
+parity requirements. Tools for analysis such as computation of various
+summary statistics and plotting functionality are also included. The package
+implements methods described in Fifield, Higgins, Imai and Tarr (2020)
+<doi:10.1080/10618600.2020.1739532>, Fifield, Imai, Kawahara, and Kenny (2020)
+<doi: 10.1080/2330443X.2020.1791773>, and McCartan and Imai (2020)
+<arXiv:2008.06131>.
 }
 \references{
 Barbu, Adrian and Song-Chun Zhu. (2005) "Generalizing Swendsen-Wang to
@@ -29,26 +23,11 @@ Sampling Arbitrary Posterior Probabilities." IEEE Transactions on
 Pattern Analysis and Machine Intelligence.
 
 Fifield, Benjamin, Michael Higgins, Kosuke Imai and Alexander
-Tarr. (2016) "A New Automated Redistricting Simulator Using Markov
-Chain Monte Carlo." \emph{Working Paper.} Available at
-\url{http://imai.princeton.edu/research/files/redist.pdf}.
+Tarr. (2020) "Automated Redistricting Simulation Using Markov
+Chain Monte Carlo."  Available at
+\url{https://imai.fas.harvard.edu/research/files/redist.pdf}.
 
 Swendsen, Robert and Jian-Sheng Wang. (1987) "Nonuniversal Critical
 Dynamics in Monte Carlo Simulations." Physical Review Letters.
-}
-\author{
-Benjamin Fifield, Department of Politics, Princeton University
-\email{benfifield@gmail.com}, \url{https://www.benfifield.com}
-
-Michael Higgins, Department of Statistics, Princeton University
-\email{mikehiggins@k-state.edu}, \url{http://www-personal.k-state.edu/~mikehiggins/}
-
-Alexander Tarr, Department of Electrical Engineering, Princeton University
-\email{atarr@princeton.edu}
-
-Kosuke Imai, Department of Politics, Princeton University
-\email{kimai@princeton.edu}, \url{http://imai.fas.harvard.edu}
-
-Maintainer: Ben Fifield <benfifield@gmail.com>
 }
 \keyword{package}
