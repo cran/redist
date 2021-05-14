@@ -2,7 +2,7 @@
 % Please edit documentation in R/enumerate.R
 \name{redist.enumerate}
 \alias{redist.enumerate}
-\title{Exact Redistricting Plan Enumerator}
+\title{Deprecated: Exact Redistricting Plan Enumerator}
 \usage{
 redist.enumerate(
   adj,
@@ -71,12 +71,6 @@ partitions, which makes it more efficient than brute-force methods. However,
 even with these methods, full redistricting problems quickly become
 intractable, necessitating the use of the MCMC-based methods implemented in
 \code{redist.mcmc}.
-}
-\examples{
-\dontrun{
-data(fl25_adj)
-test <- redist.enumerate(adj = fl25_adj)
-}
 }
 \references{
 Fifield, Benjamin, Michael Higgins, Kosuke Imai and Alexander

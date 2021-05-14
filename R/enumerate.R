@@ -14,7 +14,7 @@ list_to_mat <- function(A){
     return(AM)
 }
 
-#' Exact Redistricting Plan Enumerator
+#' Deprecated: Exact Redistricting Plan Enumerator
 #'
 #' \code{redist.enumerate} uses a spanning-tree method to fully enumerate all
 #' valid redistricting plans with $n$ districts given a set of geographic units.
@@ -64,11 +64,6 @@ list_to_mat <- function(A){
 #' Carlo." Working Paper. Available at
 #' \url{http://imai.princeton.edu/research/files/redist.pdf}.
 #'
-#' @examples
-#' \dontrun{
-#' data(fl25_adj)
-#' test <- redist.enumerate(adj = fl25_adj)
-#' }
 #' @concept enumerate
 #' @export
 redist.enumerate <- function(adj,

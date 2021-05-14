@@ -132,7 +132,8 @@
 #' McCartan, C., & Imai, K. (2020). Sequential Monte Carlo for Sampling Balanced and Compact Redistricting Plans.
 #' Available at \url{https://imai.fas.harvard.edu/research/files/SMCredist.pdf}.
 #'
-#' @examples \dontrun{
+#' @examples \donttest{
+#' set.seed(1)
 #' data(fl25)
 #'
 #' fl_map = redist_map(fl25, ndists=3, pop_tol=0.1)
@@ -140,7 +141,7 @@
 #' sampled_basic = redist_smc(fl_map, 10000)
 #'
 #' sampled_constr = redist_smc(fl_map, 10000, constraints=list(
-#'                                 incumbency = list(strength=1000, incumbents=c(3, 6, 25))
+#'                                 incumbency = list(strength=100, incumbents=c(3, 6, 25))
 #'                             ))
 #' }
 #'
@@ -169,6 +170,9 @@ redist_smc = function(map, nsims, counties=NULL, compactness=1, constraints=list
     if (is.null(counties)) {
         counties = rep(1, V)
     } else {
+        if (any(is.na(counties)))
+            stop("County vector must not contain missing values.")
+
         # handle discontinuous counties
         component = contiguity(adj, as.integer(as.factor(counties)))
         counties = dplyr::if_else(component > 1,
@@ -293,5 +297,11 @@ process_smc_ms_constr = function(constraints, V) {
 #'
 #' @param x the weights
 #'
+#' @return numeric vector
+#'
 #' @export
+#' 
+#' @examples 
+#' redist_quantile_trunc(c(1,2,3,4))
+#' 
 redist_quantile_trunc = function(x) pmin(x, quantile(x, 1 - length(x)^(-0.5)))

@@ -356,35 +356,12 @@ simulated tempering functionality to improve the mixing of the Markov
 Chain.
 }
 \examples{
-\dontrun{
+\donttest{
 data(fl25)
 data(fl25_enum)
 data(fl25_adj)
 
-## Code to run the simulations in Figure 4 in Fifield, Higgins,Imai and
-Tarr (2015)
-
-## Get an initial partition
-init_plan <- fl25_enum$plans[, 5118]
-
-## Run the algorithm
-alg_253 <- redist.mcmc(adj = fl25_adj, total_pop = fl25$pop,
-                       init_plan = init_plan, nsims = 10000)
- 
- ## You can also let it find a plan on its own!
- sims <- redist.mcmc(adj = fl25_adj, total_pop = fl25$pop,
-                       ndists = 3, nsims = 10000)
- 
- 
-}
-
-\dontrun{
-data(fl25)
-data(fl25_enum)
-data(fl25_adj)
-
-## Code to run the simulations in Figure 4 in Fifield, Higgins,Imai and
-Tarr (2015)
+## Code to run the simulations in Figure 4 in Fifield, Higgins, Imai and Tarr (2015)
 
 ## Get an initial partition
 init_plan <- fl25_enum$plans[, 5118]
@@ -399,6 +376,7 @@ alg_253 <- redist.flip(adj = fl25_adj, total_pop = fl25$pop,
  
  
 }
+
 }
 \references{
 Fifield, Benjamin, Michael Higgins, Kosuke Imai and Alexander

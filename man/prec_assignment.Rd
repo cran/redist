@@ -4,12 +4,15 @@
 \alias{prec_assignment}
 \title{Extract the district assignments for a precinct across all simulated plans}
 \usage{
-prec_assignment(prec, .data = get0(".", parent.frame()))
+prec_assignment(prec, .data = cur_plans())
 }
 \arguments{
 \item{prec}{the precinct number or ID}
 
 \item{.data}{a \code{\link{redist_plans}} object}
+}
+\value{
+integer vector, a row from a plans matrix
 }
 \description{
 Extract the district assignments for a precinct across all simulated plans

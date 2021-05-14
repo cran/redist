@@ -59,7 +59,7 @@
 #' (2020). Voting Rights, Markov Chains, and Optimization by Short Bursts. arXiv
 #' preprint arXiv:2011.02288.
 #'
-#' @examples \dontrun{
+#' @examples \donttest{
 #' data(iowa)
 #'
 #' iowa_map = redist_map(iowa, existing_plan=cd_2010, pop_tol=0.01)
@@ -104,6 +104,9 @@ redist_shortburst = function(map, score_fn=NULL, stop_at=NULL,
     if (is.null(counties)) {
         counties = rep(1, V)
     } else {
+        if (any(is.na(counties)))
+            stop("County vector must not contain missing values.")
+
         # handle discontinuous counties
         component = contiguity(adj, as.integer(as.factor(counties)))
         counties = dplyr::if_else(component > 1,
@@ -111,8 +114,9 @@ redist_shortburst = function(map, score_fn=NULL, stop_at=NULL,
                                   as.character(counties)) %>%
             as.factor() %>%
             as.integer()
+
         if (any(component > 1)) {
-          warning('counties were not contiguous; expect additional splits.')
+            warning('counties were not contiguous; expect additional splits.')
         }
     }
 
@@ -125,7 +129,7 @@ redist_shortburst = function(map, score_fn=NULL, stop_at=NULL,
     stopifnot(max(init_plan) == ndists)
 
 
-    if(backend == 'mergesplit'){
+    if (backend == 'mergesplit') {
         pop_bounds = attr(map, "pop_bounds")
     } else {
         pop_tol <- get_pop_tol(map)
@@ -153,7 +157,6 @@ redist_shortburst = function(map, score_fn=NULL, stop_at=NULL,
                      0, 0, 0, rep(1, ndists), 0, 1.0, k, verbosity=0)$plans[, -1L]
         }
     } else {
-
         flip_constraints <- process_flip_constr(constraints = flip_constraints,
                                                 nrow(map))
 
@@ -297,7 +300,7 @@ redist_shortburst = function(map, score_fn=NULL, stop_at=NULL,
 #' `group_pct`, and `polsby_popper` and smaller values are better for `splits` and `pop_dev`.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data(iowa)
 #' iowa_map = redist_map(iowa, existing_plan=cd_2010, pop_tol=0.05, total_pop = pop)
 #'
@@ -431,6 +434,7 @@ scorer_status_quo = function(map, existing_plan=get_existing(map)) {
 
     stopifnot(!is.null(existing_plan))
     stopifnot(!is.null(pop))
+    stopifnot(ndists == length(unique(existing_plan)))
 
     fn = function(plans) {
         1 - 0.5*var_info_vec(plans, existing_plan, pop) / log(ndists)
@@ -447,6 +451,7 @@ scorer_status_quo = function(map, existing_plan=get_existing(map)) {
 #' @name scorer-arith
 #' @concept prepare
 #' @md
+#' @returns function of class redist_scorer
 NULL
 
 #' @rdname scorer-arith

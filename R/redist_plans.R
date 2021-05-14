@@ -141,7 +141,7 @@ redist_plans = function(plans, map, algorithm, wgt=NULL, ...) {
 #'
 #' @param x the \code{redist_plans} object
 #' @param ... ignored
-#'
+#' @return matrix
 #' @concept analyze
 #' @export
 get_plans_matrix = function(x) {
@@ -150,6 +150,7 @@ get_plans_matrix = function(x) {
 }
 #' @rdname get_plans_matrix
 #' @method as.matrix redist_plans
+#' @return matrix
 #' @export
 as.matrix.redist_plans = function(x, ...) get_plans_matrix(x)
 
@@ -183,6 +184,7 @@ get_plans_weights = function(plans) {
 #' @param ... Ignored.
 #' @importFrom stats weights
 #' @method weights redist_plans
+#' @return numeric vector
 #' @export
 weights.redist_plans = function(object, ...) {
     get_plans_weights(object)
@@ -284,8 +286,8 @@ dplyr_row_slice.redist_plans = function(data, i, ...) {
         y = set_plan_matrix(y, plans_m[,draws_left, drop=F])
     }
 
-    if(is.factor(y$draw)){
-    #    y$draw <- droplevels(y$draw)
+    if (is.factor(y$draw)) {
+        y$draw <- droplevels(y$draw)
     }
 
     y
@@ -298,9 +300,12 @@ dplyr_reconstruct.redist_plans = function(data, template) {
     reconstruct.redist_plans(data, template)
 }
 
-
+#' Print method for redist_plans
+#' @param x redist_plans object
+#' @param \dots additional arguments
 #' @method print redist_plans
 #' @importFrom utils str
+#' @return prints to console
 #' @export
 print.redist_plans = function(x, ...) {
     plans_m = get_plans_matrix(x)
@@ -363,7 +368,7 @@ print.redist_plans = function(x, ...) {
 #' @param type the name of the plotting function to use. Will have
 #'   \code{redist.plot.}, prepended to it; e.g., use \code{type="plans"} to call
 #'   \code{\link{redist.plot.plans}}.
-#'
+#' @return ggplot
 #' @concept plot
 #' @export
 plot.redist_plans = function(x, ..., type="distr_qtys") {

@@ -16,12 +16,12 @@
 #'
 #' @export
 #' @md
-#' @examples \dontrun{
+#' @examples
 #' data(fl25)
 #' adj <- redist.adjacency(fl25)
 #' out <- redist.mergesplit(adj = adj, total_pop = fl25$pop,
 #'                          nsims = 5, ndists = 3, pop_tol = 0.1)
-#' }
+#' 
 redist.mergesplit <- function(adj, total_pop, nsims, ndists, pop_tol = 0.01,
                               init_plan, counties, compactness = 1,
                               constraints = list(), constraint_fn = function(m) rep(0, ncol(m)),
@@ -53,13 +53,16 @@ redist.mergesplit <- function(adj, total_pop, nsims, ndists, pop_tol = 0.01,
   }
 
   if (missing(counties)) {
-    counties <- rep(1, V)
+      counties <- rep(1, V)
   } else {
-    if (max(contiguity(adj = adj, group = redist.county.id(counties))) > 1) {
-      warning('Counties were not continuous. Additional county splits are expected.')
-      counties <- redist.county.relabel(adj = adj, counties = counties)
-      counties <- redist.county.id(counties = counties)
-    }
+      if (any(is.na(counties)))
+          stop("County vector must not contain missing values.")
+      if (max(contiguity(adj = adj, group = redist.county.id(counties))) > 1) {
+          warning('Counties were not continuous. Additional county splits are expected.')
+
+          counties <- redist.county.relabel(adj = adj, counties = counties)
+          counties <- redist.county.id(counties = counties)
+      }
   }
 
   # Other constraints

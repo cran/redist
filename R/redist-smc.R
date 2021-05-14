@@ -51,7 +51,7 @@
 #' McCartan, C., & Imai, K. (2020). Sequential Monte Carlo for Sampling Balanced and Compact Redistricting Plans.
 #' Available at \url{https://imai.fas.harvard.edu/research/files/SMCredist.pdf}.
 #'
-#' @examples \dontrun{
+#' @examples \donttest{
 #' data(fl25)
 #' data(fl25_adj)
 #' data(fl25_enum)
@@ -63,7 +63,7 @@
 #'                             nsims=10000, ndists=3, pop_tol=0.1,
 #'                             constraints=list(
 #'                                 status_quo = list(strength=10, current=fl25_enum$plans[,5118]),
-#'                                 incumbency = lsit(strength=1000, incumbents=c(3, 6, 25))
+#'                                 incumbency = list(strength=100, incumbents=c(3, 6, 25))
 #'                             ))
 #' }
 #'
@@ -113,6 +113,8 @@ redist.smc = function(adj, total_pop, nsims, ndists, counties=NULL,
     } else {
         if (length(unique(counties)) != max(counties))
             stop("County numbers must run from 1 to n_county with no interruptions.")
+        if (any(is.na(counties)))
+            stop("County vector must not contain missing values.")
 
         # handle discontinuous counties
         counties = redist.county.relabel(adj, counties)

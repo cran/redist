@@ -128,7 +128,7 @@
 #' DeFord, D., Duchin, M., and Solomon, J. (2019). Recombination: A family of
 #' Markov chains for redistricting. arXiv preprint arXiv:1911.05725.
 #'
-#' @examples \dontrun{
+#' @examples \donttest{
 #' data(fl25)
 #'
 #' fl_map = redist_map(fl25, ndists=3, pop_tol=0.1)
@@ -178,6 +178,9 @@ redist_mergesplit = function(map, nsims, warmup=floor(nsims/2),
     if (is.null(counties)) {
         counties = rep(1, V)
     } else {
+        if (any(is.na(counties)))
+            stop("County vector must not contain missing values.")
+
         # handle discontinuous counties
         component = contiguity(adj, as.integer(as.factor(counties)))
         counties = dplyr::if_else(component > 1,
@@ -216,8 +219,13 @@ redist_mergesplit = function(map, nsims, warmup=floor(nsims/2),
                      compactness = compactness,
                      constraints = constraints,
                      adapt_k_thresh = adapt_k_thresh,
-                     mh_acceptance = mean(acceptances)) %>%
-        mutate(mcmc_accept = rep(acceptances[-(1:(warmup))], each = ndists))
+                     mh_acceptance = mean(acceptances))
+    
+    if(warmup == 0){
+        out <- out %>% mutate(mcmc_accept = rep(acceptances, each = ndists))
+    } else {
+        out <- out %>% mutate(mcmc_accept = rep(acceptances[-seq_len(warmup)], each = ndists))
+    }
 
 
     if (!is.null(init_name) && !isFALSE(init_name)) {
