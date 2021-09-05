@@ -116,7 +116,7 @@ reconstruct.redist_map = function(data, old) {
 #'   single \code{list} or \code{data.frame}.  These will be passed on to the
 #'   \code{\link{tibble}} constructor.
 #' @param existing_plan \code{\link[dplyr:dplyr_tidy_select]{<tidy-select>}} the
-#'   existing district assignment.
+#'   existing district assignment. Must be numeric or convertable to numeric.
 #' @param pop_tol \code{\link[dplyr:dplyr_data_masking]{<data-masking>}} the population tolerance.
 #'   The percentage deviation from the average population will be constrained to
 #'   be no more than this number. If `existing_plan` is provided, defaults to
@@ -145,7 +145,7 @@ reconstruct.redist_map = function(data, old) {
 #' @md
 #' @export
 redist_map = function(..., existing_plan=NULL, pop_tol=NULL,
-                      total_pop=c("pop", "population", "total_pop"),
+                      total_pop=c("pop", "population", "total_pop", "POP100"),
                       ndists=NULL, pop_bounds=NULL,
                       adj=NULL, adj_col="adj", planarize=3857) {
     x = tibble(...)
@@ -169,14 +169,6 @@ redist_map = function(..., existing_plan=NULL, pop_tol=NULL,
         }
     }
 
-    if (is_sf && is.null(adj)) {
-        if (!is.null(x[[adj_col]]))
-            stop("Column `", adj_col, "` already present in data. ",
-                 "Specify an alternate adj column.")
-
-        adj = redist.adjacency(x)
-    }
-
     pop_col = names(x)[tidyselect::eval_select(rlang::enquo(total_pop), x,
                                                strict=FALSE)]
     if (length(pop_col) == 0) {
@@ -191,19 +183,32 @@ redist_map = function(..., existing_plan=NULL, pop_tol=NULL,
 
     existing_col = names(tidyselect::eval_select(rlang::enquo(existing_plan), x))
     if (length(existing_col) == 0)
-        existing_col = NULL
+      existing_col = NULL
 
-    if (is.null(ndists))  {
-        if (!is.null(existing_col))
+    if (!is.null(existing_col)) {
+      if (!is.numeric(x[[existing_col]])) {
+        temp_col <- NULL
+        suppressWarnings({temp_col <- as.numeric(x[[existing_col]])})
+        if (!any(is.na(temp_col))) {
+          x[[existing_col]] <- temp_col
+        } else {
+          stop('`existing_col` was not numeric and could not be converted to numeric.')
+        }
+      }
+    }
+
+    if (is.null(ndists)) {
+        if (!is.null(existing_col)) {
             ndists = length(unique(x[[existing_col]]))
-        else
-            stop("Must specify `ndists` if `existing_plan` is not supplied.")
+        } else {
+          stop("Must specify `ndists` if `existing_plan` is not supplied.")
+        }
     } else {
         ndists = as.integer(rlang::eval_tidy(rlang::enquo(ndists), x))
     }
 
     pop_tol = eval_tidy(enquo(pop_tol), x)
-    if (is.null(pop_tol)) {
+    if (is.null(pop_tol) && is.null(pop_bounds)) {
         if (!is.null(existing_col)) {
             pop_tol = redist.parity(x[[existing_col]], x[[pop_col]])
             if (pop_tol <= 0.001)
@@ -224,10 +229,17 @@ redist_map = function(..., existing_plan=NULL, pop_tol=NULL,
         pop_bounds = rlang::eval_tidy(rlang::enquo(pop_bounds), x)
     }
 
+    if (is_sf && is.null(adj)) {
+        if (!is.null(x[[adj_col]]))
+            stop("Column `", adj_col, "` already present in data. ",
+                 "Specify an alternate adj column.")
+
+        adj = redist.adjacency(x)
+    }
 
     validate_redist_map(
         new_redist_map(x, adj, ndists, pop_bounds, pop_col, adj_col,
-                       add_adj=T, existing_col)
+                       add_adj=TRUE, existing_col)
     )
 }
 
@@ -399,6 +411,54 @@ summarise.redist_map = function(.data, ..., .groups=NULL) {
     reconstruct.redist_map(ret, .data)
 }
 
+#' @export
+#' @importFrom dplyr rename
+rename.redist_map <- function(.data, ...) {
+    ret = NextMethod()
+
+    cols = tidyselect::eval_rename(rlang::expr(c(...)), .data)
+    if (!is.na(colnum <- match(attr(.data, "adj_col"), names(.data)[cols]))) {
+        attr(.data, "adj_col") = names(cols)[colnum]
+    }
+    if (!is.na(colnum <- match(attr(.data, "pop_col"), names(.data)[cols]))) {
+        attr(.data, "pop_col") = names(cols)[colnum]
+    }
+    if (!is.na(colnum <- match(attr(.data, "existing_col"), names(.data)[cols]))) {
+        attr(.data, "existing_col") = names(cols)[colnum]
+    }
+
+    reconstruct.redist_map(ret, .data)
+}
+
+#' @export
+#' @importFrom dplyr select
+select.redist_map <- function(.data, ...) {
+    ret = NextMethod()
+
+    cols = tidyselect::eval_select(rlang::expr(c(...)), .data)
+    if (!is.na(colnum <- match(attr(.data, "adj_col"), names(.data)[cols]))) {
+        attr(.data, "adj_col") = names(cols)[colnum]
+    } else {
+        stop("Must keep `", attr(.data, "adj_col"), "` column, ",
+             "or convert to a tibble with `as_tibble()`.")
+    }
+    if (!is.na(colnum <- match(attr(.data, "pop_col"), names(.data)[cols]))) {
+        attr(.data, "pop_col") = names(cols)[colnum]
+    } else {
+        stop("Must keep `", attr(.data, "pop_col"), "` column, ",
+             "or convert to a tibble with `as_tibble()`.")
+    }
+    if (!is.na(colnum <- match(attr(.data, "existing_col"), names(.data)[cols]))) {
+        attr(.data, "existing_col") = names(cols)[colnum]
+    } else {
+        stop("Must keep `", attr(.data, "existing_col"), "` column, ",
+             "or convert to a tibble with `as_tibble()`.")
+    }
+
+    reconstruct.redist_map(ret, .data)
+}
+
+
 #' Generic to print redist_map
 #' @param x redist_map
 #' @param \dots additional argumentss
@@ -464,9 +524,13 @@ print.redist_map = function(x, ...) {
 #'   district and indicate the \code{fill} variable by shading.
 #' @param adj if \code{TRUE}, force plotting the adjacency graph. Overrides
 #'   \code{by_distr}.
+#' @param interactive if \code{TRUE}, show an interactive map in the viewer
+#'   rather than a static map. Ignores \code{adj} and \code{by_distr}.
 #' @param ... passed on to \code{\link{redist.plot.map}} (or
-#'   \code{\link{redist.plot.adj}} if \code{adj=TRUE}). Useful parameters
-#'   may include \code{zoom_to}, \code{boundaries}, and \code{title}.
+#'   \code{\link{redist.plot.adj}} if \code{adj=TRUE}, or
+#'   \code{\link{redist.plot.interactive}} if \code{interactive=TRUE}).
+#'   Useful parameters may include \code{zoom_to}, \code{boundaries}, and
+#'   \code{title}.
 #'
 #' @examples
 #' data(fl25)
@@ -485,14 +549,21 @@ print.redist_map = function(x, ...) {
 #' @concept prepare
 #' @concept plot
 #' @export
-plot.redist_map = function(x, fill=NULL, by_distr=FALSE, adj=FALSE, ...) {
+plot.redist_map = function(x, fill=NULL, by_distr=FALSE, adj=FALSE,
+                           interactive=FALSE, ...) {
     if (!inherits(x, "sf"))
         stop("Plotting requires a shapefile.\n  ",
              "If you've just used `merge_by`, consider passing `drop_geom=FALSE`.")
 
+    if (interactive) {
+        if (adj) warning("`adj` ignored when `interactive=TRUE`")
+        if (by_distr) warning("`by_distr` ignored when `interactive=TRUE`")
+        return(redist.plot.interactive(x, !!enquo(fill), ...))
+    }
+
     fill = rlang::enquo(fill)
+    existing = get_existing(x)
     if (rlang::quo_is_null(fill)) {
-        existing = get_existing(x)
         if (!is.null(existing) && isFALSE(adj)) {
             redist.plot.map(shp = x, adj = get_adj(x), plan=existing, ...)
         } else {
@@ -500,7 +571,6 @@ plot.redist_map = function(x, fill=NULL, by_distr=FALSE, adj=FALSE, ...) {
         }
     } else {
         fill_name = rlang::quo_text(fill)
-        existing = get_existing(x)
         if (!is.null(existing) && isTRUE(by_distr)) {
             redist.plot.map(shp = x, adj = get_adj(x), plan=existing,
                             fill = !!fill, fill_label=fill_name, ...)

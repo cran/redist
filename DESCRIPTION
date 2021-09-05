@@ -1,6 +1,6 @@
 Package: redist
-Version: 3.0.7
-Date: 2021-05-03
+Version: 3.1.1
+Date: 2021-09-04
 Title: Simulation Methods for Legislative Redistricting
 Authors@R: c(
     person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu", role = c("aut", "cre")),
@@ -24,12 +24,13 @@ Depends: R (>= 3.5.0)
 Imports: Rcpp (>= 0.11.0), rlang, vctrs, tidyselect, stringr, dplyr (>=
         1.0.0), sf, doParallel, foreach, servr, sys, coda, ggplot2,
         patchwork, readr
-Suggests: igraph, s2, lwgeom, withr, loo, Rmpi, knitr, rmarkdown,
-        rmapshaper, scales, units, spdep, RSpectra, testthat (>= 3.0.0)
+Suggests: igraph, s2, lwgeom, withr, leaflet, leafgl, loo, Rmpi, knitr,
+        rmarkdown, rmapshaper, scales, units, spdep, RSpectra, testthat
+        (>= 3.0.0)
 LinkingTo: Rcpp, RcppArmadillo
 License: GPL (>= 2)
 SystemRequirements: OpenMPI, gmp, libxml2, python
-Packaged: 2021-05-04 01:30:04 UTC; chris
+Packaged: 2021-09-05 00:56:45 UTC; chris
 NeedsCompilation: yes
 BugReports: https://github.com/alarm-redist/redist/issues
 URL: https://alarm-redist.github.io/redist/
@@ -45,4 +46,4 @@ Author: Christopher T. Kenny [aut, cre],
   Alexander Tarr [ctb],
   Michael Higgins [ctb]
 Repository: CRAN
-Date/Publication: 2021-05-15 00:40:06 UTC
+Date/Publication: 2021-09-05 04:30:06 UTC

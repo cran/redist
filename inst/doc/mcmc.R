@@ -47,7 +47,7 @@ set.seed(1)
 
 ## -----------------------------------------------------------------------------
 sims <- redist.flip(adj = adj, total_pop = iowa$pop, init_plan = iowa$cd_2010,
-                    nsims = 1000, pop_tol = 0.05)
+                    nsims = 100, pop_tol = 0.05)
 
 ## -----------------------------------------------------------------------------
 class(sims)
@@ -56,21 +56,21 @@ class(sims)
 dim(sims$plans)
 
 ## -----------------------------------------------------------------------------
-redist.plot.map(shp = iowa, plan = sims$plans[, 1000])
+redist.plot.map(shp = iowa, plan = sims$plans[, 100])
 
 ## -----------------------------------------------------------------------------
 sims_comp <- redist.flip(adj = adj, total_pop = iowa$pop, init_plan = iowa$cd_2010,
-                         nsims = 1000, pop_tol = 0.05,
+                         nsims = 100, pop_tol = 0.05,
                          constraint = 'compact', constraintweights = 0.4,
                          compactness_metric = 'edges-removed')
 
 ## -----------------------------------------------------------------------------
-redist.plot.map(shp = iowa, plan = sims_comp$plans[, 1000])
+redist.plot.map(shp = iowa, plan = sims_comp$plans[, 100])
 
 ## -----------------------------------------------------------------------------
 set.seed(1)
 nchains <- 4
-nsims <- 2000
+nsims <- 100
 
 ## -----------------------------------------------------------------------------
 flip_chains <- lapply(1:nchains, function(x){
@@ -96,20 +96,20 @@ iowa_map <- redist_map(iowa, existing_plan = cd_2010, pop_tol=0.01)
 set.seed(2)
 
 ## ----sims---------------------------------------------------------------------
-tidy_sims <- iowa_map %>% redist_flip(nsims = 1000)
+tidy_sims <- iowa_map %>% redist_flip(nsims = 100)
 
 ## -----------------------------------------------------------------------------
 cons <- flip_constraints_helper(iowa_map, constraint = NULL)
 
 ## -----------------------------------------------------------------------------
-tidy_sims_no_comp <- iowa_map %>% redist_flip(nsims = 1000, constraints = cons)
+tidy_sims_no_comp <- iowa_map %>% redist_flip(nsims = 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
 cons <- flip_constraints_helper(map = iowa_map, constraint = c('compact', 'similarity'),
                                 constraintweight = c(0.6, 1), init_plan = cd_2010)
 
 ## -----------------------------------------------------------------------------
-tidy_sims_sq_comp <- iowa_map %>% redist_flip(nsims = 1000, constraints = cons)
+tidy_sims_sq_comp <- iowa_map %>% redist_flip(nsims = 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
 class(tidy_sims)
@@ -143,7 +143,7 @@ redist.diagplot(seg, plot = "mean")
 
 ## -----------------------------------------------------------------------------
 seg_chains <- lapply(1:nchains, 
-                     function(i){redist.segcalc(algout = flip_chains[[i]], 
+                     function(i){redist.segcalc(plans = flip_chains[[i]], 
                                                 group_pop = iowa_map$rep_08,
                                                 total_pop = iowa_map$pop)})
 
@@ -159,27 +159,27 @@ iowa_map <- redist_map(iowa, existing_plan = cd_2010, pop_tol = 0.02, total_pop 
 
 cons <- flip_constraints_helper(map = iowa_map, constraint = c('compact', 'population'),
                                 constraintweight = c(0.5, 100))
-sims <- redist_flip(map = iowa_map,  nsims = 2500)
+sims <- redist_flip(map = iowa_map,  nsims = 100)
 
 ## -----------------------------------------------------------------------------
 mean(sims$mhdecisions, na.rm = TRUE)
 
 ## -----------------------------------------------------------------------------
-sims_new <- redist_flip(map = iowa_map, nsims = 2500, pop_tol = 0.02,
+sims_new <- redist_flip(map = iowa_map, nsims = 100, pop_tol = 0.02,
                         constraints = cons, eprob = 0.10, lambda = 2, verbose = FALSE)
 mean(sims_new$mhdecisions, na.rm = TRUE)
 
 ## -----------------------------------------------------------------------------
-dists <- redist.distances(plan = get_plans_matrix(sims))$Hamming
+dists <- redist.distances(plans = get_plans_matrix(sims))$Hamming
 dists_new <- redist.distances(plans = get_plans_matrix(sims_new))$Hamming
-adj_dists <- rep(NA_integer_, 2499)
-adj_dists_new <- rep(NA_integer_, 2499)
-for(i in 1:2499){
+adj_dists <- rep(NA_integer_, 100)
+adj_dists_new <- rep(NA_integer_, 100)
+for(i in 1:100){
   adj_dists[i] <- dists[i, i + 1]
   adj_dists_new[i] <- dists_new[i, i + 1]
 }
 tibble(Hamming = c(adj_dists, adj_dists_new), 
-       `lambda/eprob` = c(rep('0/0.05', 2499), rep('2/0.10', 2499))) %>% 
+       `lambda/eprob` = c(rep('0/0.05', 100), rep('2/0.10', 100))) %>% 
   ggplot() + 
   geom_density(aes(x = Hamming, color = `lambda/eprob`)) + 
   theme_bw()
@@ -198,7 +198,7 @@ cons <- flip_constraints_helper(map = iowa_map,
                                 rvote = iowa$rep_08, dvote = iowa$dem_08)
 
 ## -----------------------------------------------------------------------------
-sims <- redist_flip(iowa_map, 2000, constraints = cons)
+sims <- redist_flip(iowa_map, 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
 cons <- flip_constraints_helper(map = iowa_map,
@@ -206,7 +206,7 @@ cons <- flip_constraints_helper(map = iowa_map,
                                 constraintweight = c(1.5, 100, 40, 20),
                                 counties = name, 
                                 rvote = iowa$rep_08, dvote = iowa$dem_08)
-sims <- redist_flip(iowa_map, 2000, constraints = cons)
+sims <- redist_flip(iowa_map, 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
 summary(sims$constraint_compact, na.rm = TRUE)

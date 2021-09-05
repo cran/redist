@@ -44,6 +44,7 @@ IntegerVector color_graph(List l, IntegerVector plan) {
         color[curr] = idx - seen.begin() + 1;
     }
 
+
     IntegerVector out(V);
     for (int i = 0; i < V; i++) {
         out[i] = color[plan[i] - 1];

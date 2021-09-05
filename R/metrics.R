@@ -20,7 +20,7 @@
 #' @param rvote A numeric vector with the Republican vote for each precinct.
 #' @param dvote A numeric vector with the Democratic vote for each precinct.
 #' @param draw A numeric to specify draw number. Defaults to 1 if only one map provided
-#' and the column number if multiple maps given. Can also take a factor input, which will become the 
+#' and the column number if multiple maps given. Can also take a factor input, which will become the
 #' draw column in the output if its length matches the number of entries in plans. If the `plans` input
 #' is a `redist_plans` object, it extracts the `draw` identifier.
 #' @param tau A non-negative number for calculating Tau Gap. Only used with option "TauGap". Defaults to 1.
@@ -28,30 +28,26 @@
 #' @param respV A value between 0 and 1 to compute responsiveness at. Only used with option "Responsiveness". Defaults to 0.5.
 #' @param bandwidth A value between 0 and 1 for computing responsiveness. Only used with option "Responsiveness." Defaults to 0.01.
 #' @param ncores Number of cores to use for parallel computing. Default is 1.
-#' @param district_membership Deprecated, use plans. A numeric vector (if only one map) or matrix with one row
-#' for each precinct and one column for each map. Required.
-#' @param nloop Deprecated, use draw. A numeric to specify loop number. Defaults to 1 if only one map provided
-#' and the column number if multiple maps given.
 #'
 #'
 #' @details This function computes specified compactness scores for a map.  If
 #' there is more than one precinct specified for a map, it aggregates to the district level
 #' and computes one score.
 #'
-#' DSeats is computed as the expected number of Democratic seats with no change in votes.
-#' DVS is the Democratic Vote Share, which is the two party vote share with Democratic votes as the numerator.
-#' EffGap is the Efficiency Gap, calculated with votes directly.
-#' EffGapEqPop is the Efficiency Gap under an Equal Population assumption, calculated with the DVS.
-#' TauGap is the Tau Gap, computed with the Equal Population assumption.
-#' MeanMedian is the Mean Median difference.
-#' Bias is the Partisan Bias computed at 0.5.
-#' BiasV is the Partisan Bias computed at value V.
-#' Declination is the value of declination at 0.5.
-#' Responsiveness is the responsiveness at the user-supplied value with the user-supplied bandwidth.
-#' LopsidedWins computed the Lopsided Outcomes value, but does not produce a test statistic.
-#' RankedMarginal computes the Ranked Marginal Deviation (0-1, smaller is better). This is also known
+#' - DSeats is computed as the expected number of Democratic seats with no change in votes.
+#' - DVS is the Democratic Vote Share, which is the two party vote share with Democratic votes as the numerator.
+#' - EffGap is the Efficiency Gap, calculated with votes directly.
+#' - EffGapEqPop is the Efficiency Gap under an Equal Population assumption, calculated with the DVS.
+#' - TauGap is the Tau Gap, computed with the Equal Population assumption.
+#' - MeanMedian is the Mean Median difference.
+#' - Bias is the Partisan Bias computed at 0.5.
+#' - BiasV is the Partisan Bias computed at value V.
+#' - Declination is the value of declination at 0.5.
+#' - Responsiveness is the responsiveness at the user-supplied value with the user-supplied bandwidth.
+#' - LopsidedWins computed the Lopsided Outcomes value, but does not produce a test statistic.
+#' - RankedMarginal computes the Ranked Marginal Deviation (0-1, smaller is better). This is also known
 #' as the "Gerrymandering Index" and is sometimes presented as this value divided by 10000.
-#' SmoothedSeat computes the Smoothed Seat Count Deviation (0-1, smaller is R Bias, bigger is D Bias).
+#' - SmoothedSeat computes the Smoothed Seat Count Deviation (0-1, smaller is R Bias, bigger is D Bias).
 #'
 #' @return A tibble with  a column for each specified measure and
 #' a column that specifies the map number.
@@ -63,7 +59,7 @@
 #' data(fl25_enum)
 #' plans_05 <- fl25_enum$plans[, fl25_enum$pop_dev <= 0.05]
 #' redist.metrics(plans_05, measure = 'all', rvote = fl25$mccain, dvote = fl25$obama)
-#' 
+#'
 #' @references
 #' Jonathan N. Katz, Gary King, and Elizabeth Rosenblatt. 2020.
 #' Theoretical Foundations and Empirical Evaluations of Partisan Fairness in District-Based Democracies.
@@ -79,26 +75,12 @@
 #' Robert Ravier & Jonathan C. Mattingly (2020) Quantifying Gerrymandering in North Carolina,
 #' Statistics and Public Policy, 7:1, 30-38, DOI: 10.1080/2330443X.2020.1796400
 #'
+#' @md
 #' @concept analyze
 #' @export
-redist.metrics <- function(plans,
-                           measure = "DSeats",
-                           rvote, dvote,
-                           tau = 1, biasV = 0.5,
-                           respV = 0.5, bandwidth = 0.01,
-                           draw = 1,
-                           ncores = 1,
-                           district_membership,
-                           nloop){
-
-  if(!missing(district_membership)){
-    .Deprecated(new = 'plans', old = 'district_membership')
-    plans <- district_membership
-  }
-  if(!missing(nloop)){
-    draw <- nloop
-    .Deprecated(new = 'draw', old = 'nloop')
-  }
+redist.metrics <- function(plans, measure = "DSeats", rvote, dvote,
+                           tau = 1, biasV = 0.5, respV = 0.5, bandwidth = 0.01,
+                           draw = 1, ncores = 1){
 
   # All measures available:
   all_measures <- c("DSeats", "DVS", "EffGap", "EffGapEqPop", "TauGap",
@@ -114,12 +96,12 @@ redist.metrics <- function(plans,
   if(any(class(plans) %in% 'redist')){
     plans <- plans$plans
   }
-  
+
   if (inherits(plans, 'redist_plans')) {
     draw <- plans$draw
     plans <- get_plans_matrix(plans)
   }
-  
+
   if(!is.numeric(plans)){
     stop('Please provide "plans" as a numeric vector or matrix.')
   }

@@ -164,18 +164,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Run mcmc algorithm - hard population constraint</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="do">## (reject any sample where population parity &gt; 20%)</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="do">## -----------------------------------------------</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mcmc.out <span class="ot">&lt;-</span> <span class="fu">redist.mcmc</span>(<span class="at">adjobj =</span> algdat.p20<span class="sc">$</span>adjlist,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">popvec =</span> algdat.p20<span class="sc">$</span>precinct.data<span class="sc">$</span>pop,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>mcmc.out <span class="ot">&lt;-</span> <span class="fu">redist.flip</span>(<span class="at">adj =</span> algdat.p20<span class="sc">$</span>adjlist,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">total_pop =</span> algdat.p20<span class="sc">$</span>precinct.data<span class="sc">$</span>pop,</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">nsims =</span> <span class="dv">10000</span>,</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">popcons =</span> .<span class="dv">2</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                        <span class="at">pop_tol =</span> <span class="fl">0.2</span>,</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                        <span class="at">ndists =</span> <span class="dv">3</span>)</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="do">## ---------------------------------------------------------------------</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="do">## Run mcmc algorithm - draws from gibbs defined by distance from parity</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="do">## (Run with no tempering)</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="do">## ---------------------------------------------------------------------</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>mcmc.out.gb <span class="ot">&lt;-</span> <span class="fu">redist.mcmc</span>(<span class="at">adjobj =</span> algdat.p20<span class="sc">$</span>adjlist,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                           <span class="at">popvec =</span> algdat.p20<span class="sc">$</span>precinct.data<span class="sc">$</span>pop,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>mcmc.out.gb <span class="ot">&lt;-</span> <span class="fu">redist.flilp</span>(<span class="at">adj =</span> algdat.p20<span class="sc">$</span>adjlist,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                           <span class="at">total_pop =</span> algdat.p20<span class="sc">$</span>precinct.data<span class="sc">$</span>pop,</span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                           <span class="at">ndists =</span> <span class="dv">3</span>,</span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                           <span class="at">nsims =</span> <span class="dv">10000</span>,</span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>                           <span class="at">constraint =</span> <span class="st">&quot;population&quot;</span>,</span>
