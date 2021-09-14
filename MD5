@@ -1,7 +1,7 @@
 e2f54da4a90d66d724595ac1d38c6eae *ChangeLog
-724a06d8c36fd14a3ef21eba726757ac *DESCRIPTION
+c89dd2e9aa5e0f064ece6b6d39134292 *DESCRIPTION
 26c3f307a8573d72e2e0ebabce4850b3 *NAMESPACE
-5d428e7324cbc71495d49733214938e0 *NEWS.md
+f38662baf7c5d97c7daf503da81ca0f5 *NEWS.md
 5149ed119a3bd2dad301ede5a0970f21 *R/RcppExports.R
 f93718ddcea80d9a508469fba6f8603c *R/adjacency.R
 408efd334de5233d05a8188f8a312953 *R/calcstats.R
@@ -50,7 +50,7 @@ ca31a373e9d4e55a1ba781dc684ecb47 *R/redist_ms.R
 93d594bdc0f297a55111235d3e61f9f3 *R/reindex.R
 19ddb1990bf1336d99ea68acfc77d240 *R/rsg.R
 cf21c28396cb9ed4e1c87af29710f933 *R/skinny_flips.R
-4bc40647e57891bf2201730183e3c192 *R/splits.R
+d27ced0096383cc89853014126829fe7 *R/splits.R
 a898a084c302158bc5151e4a09efe594 *R/subset.R
 05bc765e93e8311f641936b4018d48bd *R/tidy.R
 cb68e1d6963775e5145ff480b3e40fa1 *build/vignette.rds
@@ -64,10 +64,10 @@ d7fbcf774974ae599f0f27021aeeb4e4 *data/fl25_enum.rda
 1c9ac127901056b57368934ec2a2c7c6 *inst/CITATION
 ac596051b45a36b581be782aa143b8da *inst/doc/glossary.R
 ccb5da69e29fcd3c4d1567177cdac4be *inst/doc/glossary.Rmd
-e757f094deab12481a6e38ec57d7295f *inst/doc/glossary.html
+d8e62d1f428e37b89cb6abc91ccb2c16 *inst/doc/glossary.html
 f400156cad965250d437866288ae5183 *inst/doc/map-preproc.R
 e25e4d6fd1bede55100521d45a2e713b *inst/doc/map-preproc.Rmd
-ae99f34d1889354ef9389421d78e115f *inst/doc/map-preproc.html
+01424c4a7ced19b596b5f2255b9183f7 *inst/doc/map-preproc.html
 1722ebd94b11f061a7aa3e0ca70f9e3a *inst/doc/mcmc.R
 4192b706b79f0b20646b71c177798d93 *inst/doc/mcmc.Rmd
 413d566768d541e4674596f8d6085905 *inst/doc/mcmc.html
