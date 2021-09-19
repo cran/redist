@@ -1,7 +1,7 @@
 e2f54da4a90d66d724595ac1d38c6eae *ChangeLog
-c89dd2e9aa5e0f064ece6b6d39134292 *DESCRIPTION
+aa6efa7371a077b65139d4f5f15df7ea *DESCRIPTION
 26c3f307a8573d72e2e0ebabce4850b3 *NAMESPACE
-f38662baf7c5d97c7daf503da81ca0f5 *NEWS.md
+326a6eaf5be51c388f3738aa184bda74 *NEWS.md
 5149ed119a3bd2dad301ede5a0970f21 *R/RcppExports.R
 f93718ddcea80d9a508469fba6f8603c *R/adjacency.R
 408efd334de5233d05a8188f8a312953 *R/calcstats.R
@@ -64,7 +64,7 @@ d7fbcf774974ae599f0f27021aeeb4e4 *data/fl25_enum.rda
 1c9ac127901056b57368934ec2a2c7c6 *inst/CITATION
 ac596051b45a36b581be782aa143b8da *inst/doc/glossary.R
 ccb5da69e29fcd3c4d1567177cdac4be *inst/doc/glossary.Rmd
-d8e62d1f428e37b89cb6abc91ccb2c16 *inst/doc/glossary.html
+5a3e01fb5ed9ca751bca52bbf00018c9 *inst/doc/glossary.html
 f400156cad965250d437866288ae5183 *inst/doc/map-preproc.R
 e25e4d6fd1bede55100521d45a2e713b *inst/doc/map-preproc.Rmd
 01424c4a7ced19b596b5f2255b9183f7 *inst/doc/map-preproc.html
@@ -322,7 +322,7 @@ ff220b41d9536cb06f2ecd2804298f9f *tests/testthat/test_ms.R
 36dbf6c3e4c1f3d5a680ae6e0b73813e *tests/testthat/test_redist_plans.R
 01eee78b90ec6adaedc12c3e8c4dc2cb *tests/testthat/test_rsg.R
 b0115bb52817a6f88a0d5ded33aaa1e4 *tests/testthat/test_skinny_flips.R
-f02f2f4a9e28c859dd0e6cfe348e04bd *tests/testthat/test_smc.R
+d586961838661556fb421387efaa0e49 *tests/testthat/test_smc.R
 4ad81e44fcf8a3e2966f1503618f2c6f *tests/testthat/test_tidy_meas.R
 ccb5da69e29fcd3c4d1567177cdac4be *vignettes/glossary.Rmd
 6b1f864e0f496e3d4fa15e21dea00b8e *vignettes/images/smc-schematic.png
