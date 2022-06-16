@@ -96,15 +96,16 @@ king_unsplit = king_land %>%
 print(king_unsplit)
 
 ## ----unsplit-plan, fig.width=8------------------------------------------------
-plans = redist_smc(king_unsplit, 50, silent=T)
+plans = redist_smc(king_unsplit, 100, silent=T)
 print(plans)
 print(pullback(plans))
-redist.plot.plans(pullback(plans), draws=1:4, geom=king_land)
+redist.plot.plans(pullback(plans), draws=1:4, shp=king_land)
 
 ## -----------------------------------------------------------------------------
 pop_inside_cores = function(boundary) {
     king_land %>%
         mutate(core = make_cores(boundary=boundary)) %>%
+        as_tibble() %>%
         group_by(core) %>%
         filter(n() > 2) %>% # filter to cores only
         pull(pop) %>% sum
@@ -119,6 +120,6 @@ king_cores = king_land %>%
 plot(king_cores)
 
 ## ----core-plans---------------------------------------------------------------
-plans = redist_smc(king_cores, 50, silent=T)
-redist.plot.plans(plans, draws=1:4, geom=king_cores)
+plans = redist_smc(king_cores, 100, silent=T)
+redist.plot.plans(plans, draws=1:4, shp=king_cores)
 

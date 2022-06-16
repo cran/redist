@@ -16,56 +16,52 @@ set.seed(1)
 data(fl25)
 data(fl25_enum)
 plan <- fl25_enum$plans[, 7241]
-adj <- redist.adjacency(fl25)
+fl25$plan <- plan
+fl_map <- redist_map(fl25, existing_plan = plan, pop_tol = 0.2, total_pop = pop)
+constr <- redist_constr(fl_map) %>% 
+    add_constr_edges_rem(0.02)
 set.seed(1)
-sims <- redist.flip(adj = adj, init_plan = plan, total_pop = fl25$pop, 
-                    nsims = 6, pop_tol = 0.10, 
-                    constraint = 'compact', constraintweights = 0.02,
-                    compactness_metric = 'edges-removed')
+sims <- redist_flip(map = fl_map, nsims = 6, constraints = constr)
 
 ## ---- echo = FALSE------------------------------------------------------------
 redist.plot.map(shp = fl25, plan = plan) + redist.plot.adj(shp = fl25, plan = plan, plot_shp = FALSE) 
 
 ## ---- echo = FALSE------------------------------------------------------------
 redist.plot.adj(shp = fl25, plan = plan, plot_shp = FALSE, title = 'Initialization') +
-  redist.plot.adj(shp = fl25, plan = sims$plans[, 1], plot_shp = FALSE, title = 'First Iteration') +
-  redist.plot.adj(shp = fl25, plan = sims$plans[, 2], plot_shp = FALSE, title = 'Second Iteration') +
-  redist.plot.adj(shp = fl25, plan = sims$plans[, 3], plot_shp = FALSE, title = 'Third Iteration') +
-  redist.plot.adj(shp = fl25, plan = sims$plans[, 4], plot_shp = FALSE, title = 'Fourth Iteration') +
-  redist.plot.adj(shp = fl25, plan = sims$plans[, 5], plot_shp = FALSE, title = 'Fifth Iteration')
+  redist.plot.adj(shp = fl25, plan = get_plans_matrix(sims)[, 1], plot_shp = FALSE, title = 'First Iteration') +
+  redist.plot.adj(shp = fl25, plan = get_plans_matrix(sims)[, 2], plot_shp = FALSE, title = 'Second Iteration') +
+  redist.plot.adj(shp = fl25, plan = get_plans_matrix(sims)[, 3], plot_shp = FALSE, title = 'Third Iteration') +
+  redist.plot.adj(shp = fl25, plan = get_plans_matrix(sims)[, 4], plot_shp = FALSE, title = 'Fourth Iteration') +
+  redist.plot.adj(shp = fl25, plan = get_plans_matrix(sims)[, 5], plot_shp = FALSE, title = 'Fifth Iteration')
 
 ## -----------------------------------------------------------------------------
 data(iowa)
 redist.plot.map(iowa, plan = cd_2010)
-
-## -----------------------------------------------------------------------------
-adj <- redist.adjacency(shp = iowa, plan = iowa$cd_2010)
+map_ia <- redist_map(iowa, existing_plan = cd_2010, pop_tol = 0.05)
 
 ## ----seed, include = FALSE----------------------------------------------------
 # set the seed so that within the vignette the results don't change
 set.seed(1)
 
 ## -----------------------------------------------------------------------------
-sims <- redist.flip(adj = adj, total_pop = iowa$pop, init_plan = iowa$cd_2010,
-                    nsims = 100, pop_tol = 0.05)
+sims <- redist_flip(map_ia, nsims = 100)
 
 ## -----------------------------------------------------------------------------
 class(sims)
 
 ## -----------------------------------------------------------------------------
-dim(sims$plans)
+dim(get_plans_matrix(sims))
 
 ## -----------------------------------------------------------------------------
-redist.plot.map(shp = iowa, plan = sims$plans[, 100])
+redist.plot.map(shp = iowa, plan = get_plans_matrix(sims)[, 100])
 
 ## -----------------------------------------------------------------------------
-sims_comp <- redist.flip(adj = adj, total_pop = iowa$pop, init_plan = iowa$cd_2010,
-                         nsims = 100, pop_tol = 0.05,
-                         constraint = 'compact', constraintweights = 0.4,
-                         compactness_metric = 'edges-removed')
+constr <- redist_constr(map_ia) %>% add_constr_edges_rem(0.4)
+
+sims_comp <- redist_flip(map_ia, nsims = 100, constraints = constr)
 
 ## -----------------------------------------------------------------------------
-redist.plot.map(shp = iowa, plan = sims_comp$plans[, 100])
+redist.plot.map(shp = iowa, plan = get_plans_matrix(sims_comp)[, 100])
 
 ## -----------------------------------------------------------------------------
 set.seed(1)
@@ -73,17 +69,16 @@ nchains <- 4
 nsims <- 100
 
 ## -----------------------------------------------------------------------------
+constr <- redist_constr(map_ia) %>% add_constr_edges_rem(0.4)
+map_ia <- redist_map(iowa, ndists = 4, pop_tol = 0.05)
 flip_chains <- lapply(1:nchains, function(x){
-  redist.flip(adj = adj,  total_pop = iowa$pop, pop_tol = 0.05,
-              nsims = nsims, init_plan = 'rsg', ndists = 4,
-              constraint = 'compact', constraintweights = 0.4,
-              compactness_metric = 'edges-removed', verbose = FALSE)
+  redist_flip(map_ia, nsims = nsims,
+              constraints = constr, verbose = FALSE)
 })
 
 ## ---- eval=F------------------------------------------------------------------
 #  mcmc_chains <- parallel::mclapply(1:nchains, function(x){
-#    redist.flip(adjobj = adjlist,  popvec = fl25$pop,
-#                nsims = nsims, ndists = 3)
+#    redist.flip(fl_map, nsims)
 #  }, mc.set.seed = 1, mc.cores = parallel::detectCores())
 
 ## -----------------------------------------------------------------------------
@@ -99,17 +94,10 @@ set.seed(2)
 tidy_sims <- iowa_map %>% redist_flip(nsims = 100)
 
 ## -----------------------------------------------------------------------------
-cons <- flip_constraints_helper(iowa_map, constraint = NULL)
+cons <- redist_constr(iowa_map)
 
 ## -----------------------------------------------------------------------------
 tidy_sims_no_comp <- iowa_map %>% redist_flip(nsims = 100, constraints = cons)
-
-## -----------------------------------------------------------------------------
-cons <- flip_constraints_helper(map = iowa_map, constraint = c('compact', 'similarity'),
-                                constraintweight = c(0.6, 1), init_plan = cd_2010)
-
-## -----------------------------------------------------------------------------
-tidy_sims_sq_comp <- iowa_map %>% redist_flip(nsims = 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
 class(tidy_sims)
@@ -119,7 +107,7 @@ plans <- get_plans_matrix(tidy_sims)
 
 ## -----------------------------------------------------------------------------
 tidy_sims <- tidy_sims %>% 
-  mutate(competitiveness = competitiveness(map = iowa_map, rvote = rep_08, dvote = dem_08))
+  mutate(competitiveness = rep(competitiveness(map = iowa_map, rvote = rep_08, dvote = dem_08), each = 4))
 
 ## -----------------------------------------------------------------------------
 tidy_sims %>% 
@@ -143,7 +131,7 @@ redist.diagplot(seg, plot = "mean")
 
 ## -----------------------------------------------------------------------------
 seg_chains <- lapply(1:nchains, 
-                     function(i){redist.segcalc(plans = flip_chains[[i]], 
+                     function(i){redist.segcalc(plans = get_plans_matrix(flip_chains[[i]]), 
                                                 group_pop = iowa_map$rep_08,
                                                 total_pop = iowa_map$pop)})
 
@@ -157,16 +145,18 @@ redist.diagplot(sumstat = seg_chains, plot = 'gelmanrubin')
 data(iowa)
 iowa_map <- redist_map(iowa, existing_plan = cd_2010, pop_tol = 0.02, total_pop = pop)
 
-cons <- flip_constraints_helper(map = iowa_map, constraint = c('compact', 'population'),
-                                constraintweight = c(0.5, 100))
+cons <- redist_constr(iowa_map) %>% 
+    add_constr_edges_rem(0.5) %>% 
+    add_constr_pop_dev(100)
+
 sims <- redist_flip(map = iowa_map,  nsims = 100)
 
 ## -----------------------------------------------------------------------------
 mean(sims$mhdecisions, na.rm = TRUE)
 
 ## -----------------------------------------------------------------------------
-sims_new <- redist_flip(map = iowa_map, nsims = 100, pop_tol = 0.02,
-                        constraints = cons, eprob = 0.10, lambda = 2, verbose = FALSE)
+sims_new <- redist_flip(map = iowa_map, nsims = 100, constraints = cons, 
+                        eprob = 0.10, lambda = 2, verbose = FALSE)
 mean(sims_new$mhdecisions, na.rm = TRUE)
 
 ## -----------------------------------------------------------------------------
@@ -191,26 +181,27 @@ sims <- sims %>% mutate(par = plan_parity(map = iowa_map))
 sims <- sims %>% filter(par <= 0.01)
 
 ## -----------------------------------------------------------------------------
-cons <- flip_constraints_helper(map = iowa_map,
-                                constraint = c('compact', 'population', 'partisan', 'countsplit'),
-                                constraintweight = c(0.25, 50, 10, 10),
-                                counties = name, 
-                                rvote = iowa$rep_08, dvote = iowa$dem_08)
+cons <- redist_constr(iowa_map) %>% 
+    add_constr_edges_rem(0.25) %>% 
+    add_constr_pop_dev(50) %>% 
+    add_constr_compet(10, rvote = rep_08, dvote = dem_08) %>% 
+    add_constr_splits(10, admin = region)
 
 ## -----------------------------------------------------------------------------
 sims <- redist_flip(iowa_map, 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
-cons <- flip_constraints_helper(map = iowa_map,
-                                constraint = c('compact', 'population', 'partisan', 'countsplit'),
-                                constraintweight = c(1.5, 100, 40, 20),
-                                counties = name, 
-                                rvote = iowa$rep_08, dvote = iowa$dem_08)
+cons <- cons <- redist_constr(iowa_map) %>% 
+    add_constr_edges_rem(1.5) %>% 
+    add_constr_pop_dev(100) %>% 
+    add_constr_compet(40, rvote = rep_08, dvote = dem_08) %>% 
+    add_constr_splits(20, admin = region)
+
 sims <- redist_flip(iowa_map, 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
-summary(sims$constraint_compact, na.rm = TRUE)
+summary(sims$constraint_edges_removed, na.rm = TRUE)
 
 ## -----------------------------------------------------------------------------
-summary(sims$constraint_population, na.rm = TRUE)
+summary(sims$constraint_pop_dev, na.rm = TRUE)
 

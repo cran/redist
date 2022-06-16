@@ -27,21 +27,21 @@ plot(iowa_map, fill = dem_08 / tot_08) +
     scale_fill_gradient2(name="Pct. Democratic '08",  midpoint=0.5)
 plot(iowa_map, fill = wvap / vap, by_distr = TRUE)
 
-## -----------------------------------------------------------------------------
-iowa_plans = redist_smc(iowa_map, nsims=1000, compactness=1)
+## ----message=FALSE------------------------------------------------------------
+iowa_plans = redist_smc(iowa_map, 500, compactness=1, runs=2)
 
 ## -----------------------------------------------------------------------------
 print(iowa_plans)
 
 ## ----ia-sim-plans-------------------------------------------------------------
-redist.plot.plans(iowa_plans, draws=1:6, geom=iowa_map)
+redist.plot.plans(iowa_plans, draws=1:6, shp=iowa_map)
 
 ## -----------------------------------------------------------------------------
 iowa_plans = match_numbers(iowa_plans, iowa_map$cd_2010)
 print(iowa_plans)
 
 ## ----message=F----------------------------------------------------------------
-county_perims = redist.prep.polsbypopper(iowa_map, iowa_map$adj)
+county_perims = prep_perims(iowa_map, iowa_map$adj)
 
 iowa_plans = iowa_plans %>%
     mutate(pop_dev = abs(total_pop / get_target(iowa_map) - 1),
@@ -49,6 +49,9 @@ iowa_plans = iowa_plans %>%
            pct_min = group_frac(iowa_map, vap - wvap, vap),
            pct_dem = group_frac(iowa_map, dem_08, dem_08 + rep_08))
 print(iowa_plans)
+
+## -----------------------------------------------------------------------------
+summary(iowa_plans)
 
 ## -----------------------------------------------------------------------------
 plan_sum = group_by(iowa_plans, draw) %>%

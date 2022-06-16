@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## -----------------------------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 library(redist)
 data(iowa)
 iowa_map <- redist_map(iowa, existing_plan = cd_2010, total_pop = pop)
@@ -46,11 +46,6 @@ sim <- redist.rsg(adj = adj, total_pop = iowa$pop, ndists = 4, pop_tol = 0.01)
 head(sim$plan)
 
 ## -----------------------------------------------------------------------------
-# standard eval -
-sims <- redist.smc(adj = adj, total_pop = iowa$pop, nsims = 10, ndists = 4, silent = TRUE)
-plans <- sims$plans
-
-# tidy eval - 
 sims <- redist_smc(map = iowa_map, nsims = 10, silent = TRUE)
 plans <- get_plans_matrix(sims)
 

@@ -1,8 +1,8 @@
 ---
-title: "Glossary of Key Redistricting Terms"
+title: "Common Arguments to `redist` Functions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Glossary of Key Redistricting Terms}
+  %\VignetteIndexEntry{Common Arguments to `redist` Functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,9 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-To set up this glossary, we load some example data which uses Iowa and its 2012-2021 congressional districts.
 
-```{r}
+```{r message=FALSE}
 library(redist)
 data(iowa)
 iowa_map <- redist_map(iowa, existing_plan = cd_2010, total_pop = pop)
@@ -113,11 +112,6 @@ head(sim$plan)
 -   Example:
 
 ```{r}
-# standard eval -
-sims <- redist.smc(adj = adj, total_pop = iowa$pop, nsims = 10, ndists = 4, silent = TRUE)
-plans <- sims$plans
-
-# tidy eval - 
 sims <- redist_smc(map = iowa_map, nsims = 10, silent = TRUE)
 plans <- get_plans_matrix(sims)
 ```
