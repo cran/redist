@@ -1,6 +1,6 @@
 Package: redist
-Version: 4.1.0
-Date: 2023-03-17
+Version: 4.1.1
+Date: 2023-04-01
 Title: Simulation Methods for Legislative Redistricting
 Authors@R: c(
     person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu", role = c("aut", "cre")),
@@ -42,7 +42,7 @@ Encoding: UTF-8
 Config/testthat/edition: 3
 Language: en-US
 LazyData: true
-Packaged: 2023-03-18 16:05:44 UTC; chris
+Packaged: 2023-04-02 23:15:42 UTC; chris
 Author: Christopher T. Kenny [aut, cre],
   Cory McCartan [aut],
   Ben Fifield [aut],
@@ -51,4 +51,4 @@ Author: Christopher T. Kenny [aut, cre],
   Alexander Tarr [ctb],
   Michael Higgins [ctb]
 Repository: CRAN
-Date/Publication: 2023-03-19 08:50:07 UTC
+Date/Publication: 2023-04-03 10:50:02 UTC

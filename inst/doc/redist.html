@@ -550,8 +550,9 @@ Iowa, we’ll use the adopted 2010 plan as a reference.</p>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 19015 Boone       4  26306  25194   202   505  20027 19448   103   260  13929</span></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 19017 Brem…       1  24276  23459   186   239  18763 18242   155   137  12871</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 19019 Buch…       1  20958  20344    59   243  15282 14979    32   128  10338</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 89 more rows, and 5 more variables: dem_08 &lt;dbl&gt;, rep_08 &lt;dbl&gt;,</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   region &lt;chr&gt;, geometry &lt;MULTIPOLYGON [US_survey_foot]&gt;, adj &lt;list&gt;</span></span></code></pre></div>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 89 more rows</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 5 more variables: dem_08 &lt;dbl&gt;, rep_08 &lt;dbl&gt;, region &lt;chr&gt;,</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   geometry &lt;MULTIPOLYGON [US_survey_foot]&gt;, adj &lt;list&gt;</span></span></code></pre></div>
 <p>This looks much the same as <code>iowa</code> itself, but metadata
 has been added, and there’s a new column, <code>adj</code>.</p>
 </div>
@@ -663,7 +664,7 @@ added using <code>add_reference()</code>.</p>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 1              4    754103     1</span></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 2              1    758248     1</span></span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 2              2    755611     1</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,994 more rows</span></span></code></pre></div>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 3,994 more rows</span></span></code></pre></div>
 <p>We can explore specific simulated plans with
 <code>redist.plot.plans()</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.plot.plans</span>(iowa_plans, <span class="at">draws=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">shp=</span>iowa_map)</span></code></pre></div>
@@ -699,7 +700,7 @@ and the reference plan.</p>
 <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 1       4           765390     1       0.641</span></span>
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 2       1           758248     1       0.872</span></span>
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 2       2           764095     1       0.872</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,994 more rows</span></span></code></pre></div>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 3,994 more rows</span></span></code></pre></div>
 <p>Then we can add summary statistics by district, using
 <code>redist</code>’s analysis functions. Here, we’ll compute the
 population deviation, the perimeter-based compactness measure related to
@@ -728,7 +729,7 @@ voters and two-party Democratic vote share by district.</p>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 1       4           765390     1       0.641 0.00499   0.395  0.0765   0.461</span></span>
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 2       1           758248     1       0.872 0.00439   0.392  0.0851   0.617</span></span>
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 2       2           764095     1       0.872 0.00329   0.313  0.0846   0.546</span></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 3,994 more rows</span></span></code></pre></div>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 3,994 more rows</span></span></code></pre></div>
 <p>Once summary statistics of interest have been calculated, it’s very
 important to check the algorithm’s diagnostics. As with any complex
 sampling algorithm, things can go wrong. Diagnostics, while not
@@ -801,7 +802,7 @@ object into plan-level summary statistics.</p>
 <span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 7       0.00910      0.380       0.113         3</span></span>
 <span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 8       0.00740      0.430       0.114         3</span></span>
 <span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 9       0.00810      0.504       0.110         3</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 991 more rows</span></span></code></pre></div>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 991 more rows</span></span></code></pre></div>
 <p>These tables of statistics are easily plotted using existing
 libraries like <code>ggplot2</code>, but <code>redist</code> provides a
 number of helpful plotting functions that automate some common tasks,
