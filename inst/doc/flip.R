@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -23,10 +23,11 @@ constr <- redist_constr(fl_map) %>%
 set.seed(1)
 sims <- redist_flip(map = fl_map, nsims = 6, constraints = constr)
 
-## ---- echo = FALSE------------------------------------------------------------
-redist.plot.map(shp = fl25, plan = plan) + redist.plot.adj(shp = fl25, plan = plan, plot_shp = FALSE) 
+## ----echo = FALSE-------------------------------------------------------------
+redist.plot.map(shp = fl25, plan = plan) + 
+    redist.plot.adj(shp = fl25, plan = plan, plot_shp = FALSE) 
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 redist.plot.adj(shp = fl25, plan = plan, plot_shp = FALSE, title = 'Initialization') +
   redist.plot.adj(shp = fl25, plan = get_plans_matrix(sims)[, 1], plot_shp = FALSE, title = 'First Iteration') +
   redist.plot.adj(shp = fl25, plan = get_plans_matrix(sims)[, 2], plot_shp = FALSE, title = 'Second Iteration') +
@@ -76,9 +77,10 @@ flip_chains <- lapply(1:nchains, function(x){
               constraints = constr, verbose = FALSE)
 })
 
-## ---- eval=F------------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  mcmc_chains <- parallel::mclapply(1:nchains, function(x){
-#    redist.flip(fl_map, nsims)
+#    redist_flip(map_ia, nsims = nsims,
+#                constraints = constr, verbose = FALSE)
 #  }, mc.set.seed = 1, mc.cores = parallel::detectCores())
 
 ## -----------------------------------------------------------------------------
@@ -87,17 +89,17 @@ data(iowa)
 ## -----------------------------------------------------------------------------
 iowa_map <- redist_map(iowa, existing_plan = cd_2010, pop_tol=0.01)
 
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 set.seed(2)
 
 ## ----sims---------------------------------------------------------------------
-tidy_sims <- iowa_map %>% redist_flip(nsims = 100)
+tidy_sims <- redist_flip(iowa_map, nsims = 100)
 
 ## -----------------------------------------------------------------------------
 cons <- redist_constr(iowa_map)
 
 ## -----------------------------------------------------------------------------
-tidy_sims_no_comp <- iowa_map %>% redist_flip(nsims = 100, constraints = cons)
+tidy_sims_no_comp <- redist_flip(iowa_map, nsims = 100, constraints = cons)
 
 ## -----------------------------------------------------------------------------
 class(tidy_sims)
@@ -107,7 +109,7 @@ plans <- get_plans_matrix(tidy_sims)
 
 ## -----------------------------------------------------------------------------
 tidy_sims <- tidy_sims %>% 
-  mutate(competitiveness = rep(competitiveness(map = iowa_map, rvote = rep_08, dvote = dem_08), each = 4))
+  mutate(competitiveness = compet_talisman(pl(), iowa_map, rvote = rep_08, dvote = dem_08))
 
 ## -----------------------------------------------------------------------------
 tidy_sims %>% 
@@ -116,9 +118,7 @@ tidy_sims %>%
   theme_bw()
 
 ## -----------------------------------------------------------------------------
-seg <- redist.segcalc(plans = get_plans_matrix(tidy_sims), 
-                      group_pop = iowa_map$rep_08,
-                      total_pop = iowa_map$pop)
+seg <- by_plan(seg_dissim(tidy_sims, iowa_map, rep_08, pop))
 
 ## -----------------------------------------------------------------------------
 redist.diagplot(seg, plot = "autocorr")
@@ -130,10 +130,9 @@ redist.diagplot(seg, plot = "densplot")
 redist.diagplot(seg, plot = "mean")
 
 ## -----------------------------------------------------------------------------
-seg_chains <- lapply(1:nchains, 
-                     function(i){redist.segcalc(plans = get_plans_matrix(flip_chains[[i]]), 
-                                                group_pop = iowa_map$rep_08,
-                                                total_pop = iowa_map$pop)})
+seg_chains <- lapply(1:nchains, function(i) { 
+    seg_dissim(flip_chains[[i]], iowa_map, rep_08, pop)
+})
 
 ## -----------------------------------------------------------------------------
 redist.diagplot(sumstat = seg_chains, plot = "trace")

@@ -341,9 +341,9 @@ Functions</h1>
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(redist)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(iowa)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>iowa_map <span class="ot">&lt;-</span> <span class="fu">redist_map</span>(iowa, <span class="at">existing_plan =</span> cd_2010, <span class="at">total_pop =</span> pop)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(redist)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">data</span>(iowa)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>iowa_map <span class="ot">&lt;-</span> <span class="fu">redist_map</span>(iowa, <span class="at">existing_plan =</span> cd_2010, <span class="at">total_pop =</span> pop)</span></code></pre></div>
 <div id="adj" class="section level1">
 <h1>adj</h1>
 <ul>
@@ -356,31 +356,31 @@ units.</p></li>
 <code>adjlist</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard eval - </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>adj <span class="ot">&lt;-</span> <span class="fu">redist.adjacency</span>(<span class="at">shp =</span> iowa)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy eval - </span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>adj <span class="ot">&lt;-</span> <span class="fu">get_adj</span>(iowa_map)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(adj)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  1 14 38 60 87</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  0 14 68 86 87</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 21 95</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[4]]</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 25 67 92</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[5]]</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 13 14 38 82</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[6]]</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  6  9 47 56 85</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot it!</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">redist.plot.adj</span>(<span class="at">shp =</span> iowa_map)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Standard eval - </span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>adj <span class="ot">&lt;-</span> <span class="fu">redist.adjacency</span>(<span class="at">shp =</span> iowa)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co"># tidy eval - </span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>adj <span class="ot">&lt;-</span> <span class="fu">get_adj</span>(iowa_map)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="fu">head</span>(adj)</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; [1]  1 14 38 60 87</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; [1]  0 14 68 86 87</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; [[3]]</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; [1] 21 95</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; [[4]]</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; [1] 25 67 92</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; [[5]]</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; [1] 13 14 38 82</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt; [[6]]</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt; [1]  6  9 47 56 85</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Plot it!</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">redist.plot.adj</span>(<span class="at">shp =</span> iowa_map)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
 </div>
 <div id="ndists" class="section level1">
@@ -392,11 +392,11 @@ units.</p></li>
 <code>n_dists</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard eval - </span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ndists <span class="ot">&lt;-</span> <span class="dv">4</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy eval - stored within redist_map object</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(iowa_map, <span class="st">&#39;ndists&#39;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 4</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Standard eval - </span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>ndists <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># tidy eval - stored within redist_map object</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="fu">attr</span>(iowa_map, <span class="st">&#39;ndists&#39;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; [1] 4</span></span></code></pre></div>
 </div>
 <div id="nsims" class="section level1">
 <h1>nsims</h1>
@@ -406,7 +406,7 @@ units.</p></li>
 <li><p>Deprecated alternative arguments: <code>nsamp</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nsims <span class="ot">&lt;-</span> <span class="dv">100</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>nsims <span class="ot">&lt;-</span> <span class="dv">100</span></span></code></pre></div>
 </div>
 <div id="pop_tol" class="section level1">
 <h1>pop_tol</h1>
@@ -418,15 +418,15 @@ population parity allowed. This is a positive
 <code>popcons</code>, <code>pop_constraint</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard eval - </span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pop_tol <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy eval - stored within redist_map object</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># - getting</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">get_pop_tol</span>(iowa_map)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5.350657e-05</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># - setting</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>iowa_map <span class="ot">&lt;-</span> <span class="fu">set_pop_tol</span>(iowa_map, <span class="at">pop_tol =</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># standard eval - </span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>pop_tol <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># tidy eval - stored within redist_map object</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># - getting</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="fu">get_pop_tol</span>(iowa_map)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; [1] 5.350657e-05</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co"># - setting</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>iowa_map <span class="ot">&lt;-</span> <span class="fu">set_pop_tol</span>(iowa_map, <span class="at">pop_tol =</span> <span class="fl">0.01</span>)</span></code></pre></div>
 </div>
 <div id="plan" class="section level1">
 <h1>plan</h1>
@@ -439,16 +439,16 @@ one for each redistricting unit, typically numbered
 <code>district_membership</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">redist.rsg</span>(<span class="at">adj =</span> adj, <span class="at">total_pop =</span> iowa<span class="sc">$</span>pop, <span class="at">ndists =</span> <span class="dv">4</span>, <span class="at">pop_tol =</span> <span class="fl">0.01</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; redist.rsg(): Automated Redistricting Starts</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 districts built using 99 precincts in 0.08 seconds...</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sim<span class="sc">$</span>plan)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 3 2 1 1 2</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">redist.rsg</span>(<span class="at">adj =</span> adj, <span class="at">total_pop =</span> iowa<span class="sc">$</span>pop, <span class="at">ndists =</span> <span class="dv">4</span>, <span class="at">pop_tol =</span> <span class="fl">0.01</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; ==================== </span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; redist.rsg(): Automated Redistricting Starts</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt;  4 districts built using 99 precincts in 0.04 seconds...</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="fu">head</span>(sim<span class="sc">$</span>plan)</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; [1] 1 3 2 4 1 1</span></span></code></pre></div>
 </div>
 <div id="plans" class="section level1">
 <h1>plans</h1>
@@ -460,8 +460,8 @@ where each column is a <code>plan</code>.</p></li>
 <code>cdvec</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">redist_smc</span>(<span class="at">map =</span> iowa_map, <span class="at">nsims =</span> <span class="dv">10</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>plans <span class="ot">&lt;-</span> <span class="fu">get_plans_matrix</span>(sims)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>sims <span class="ot">&lt;-</span> <span class="fu">redist_smc</span>(<span class="at">map =</span> iowa_map, <span class="at">nsims =</span> <span class="dv">10</span>, <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>plans <span class="ot">&lt;-</span> <span class="fu">get_plans_matrix</span>(sims)</span></code></pre></div>
 </div>
 <div id="init_plan" class="section level1">
 <h1>init_plan</h1>
@@ -472,14 +472,14 @@ unit.</p></li>
 <li><p>Deprecated alternative arguments: <code>initcds</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard eval - </span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>init_plan <span class="ot">&lt;-</span> iowa<span class="sc">$</span>cd_2010</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy eval - stored within redist_map object</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">get_existing</span>(iowa_map)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] 3 3 1 2 4 1 1 4 1 1 4 4 4 4 3 2 4 4 4 2 4 1 2 4 3 2 2 1 2 4 1 4 1 4 4 3 4 4</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [39] 3 4 4 4 4 2 1 4 4 1 1 2 2 2 1 2 4 2 1 2 2 4 3 2 2 1 3 1 4 2 3 2 4 4 3 4 4 4</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [77] 3 3 1 3 4 2 4 4 4 1 3 3 2 2 3 2 2 4 4 1 4 1 4</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># standard eval - </span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>init_plan <span class="ot">&lt;-</span> iowa<span class="sc">$</span>cd_2010</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># tidy eval - stored within redist_map object</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="fu">get_existing</span>(iowa_map)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;  [1] 3 3 1 2 4 1 1 4 1 1 4 4 4 4 3 2 4 4 4 2 4 1 2 4 3 2 2 1 2 4 1 4 1 4 4 3 4 4</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; [39] 3 4 4 4 4 2 1 4 4 1 1 2 2 2 1 2 4 2 1 2 2 4 3 2 2 1 3 1 4 2 3 2 4 4 3 4 4 4</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; [77] 3 3 1 3 4 2 4 4 4 1 3 3 2 2 3 2 2 4 4 1 4 1 4</span></span></code></pre></div>
 </div>
 <div id="total_pop" class="section level1">
 <h1>total_pop</h1>
@@ -492,21 +492,21 @@ population within each unit.</p></li>
 <code>fullpopvec</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standard eval</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>total_pop <span class="ot">&lt;-</span> iowa<span class="sc">$</span>pop</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy eval - a column within the redist_map object tracked by attributes</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>iowa_map[[<span class="fu">attr</span>(iowa_map, <span class="st">&#39;pop_col&#39;</span>)]]</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]   7682   4029  14330  12887   6119  26076 131090  26306  24276  20958</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11]  20260  14867   9670  20816  13956  18499  44151  12072  12439   9286</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21]  16667  18129  49116  17096  66135   8753   8457  17764  40325  16667</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [31]  93653  10302  20880  16303  10680   7441   9336  12453  10954  15673</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [41]  11341  17534  14928  20145   9566   9815   7089  16355  19848  36842</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [51]  16843 130882  20638  10511  15543  35862 211226  11387   8898  11581</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [61]  15679  22381  33309  40648  15059  10776   9243   7970  10740  42745</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [71]  14398   6462  15932   9421  24986   7310 430640  93158  18914   5131</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [81]  10350 165224  12167  33704  89542  17767   6317  12534   7570  35625</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [91]  46225  21704   6403  38013  10866  21056 102172   7598  13229</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># standard eval</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>total_pop <span class="ot">&lt;-</span> iowa<span class="sc">$</span>pop</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># tidy eval - a column within the redist_map object tracked by attributes</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>iowa_map[[<span class="fu">attr</span>(iowa_map, <span class="st">&#39;pop_col&#39;</span>)]]</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt;  [1]   7682   4029  14330  12887   6119  26076 131090  26306  24276  20958</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; [11]  20260  14867   9670  20816  13956  18499  44151  12072  12439   9286</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; [21]  16667  18129  49116  17096  66135   8753   8457  17764  40325  16667</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; [31]  93653  10302  20880  16303  10680   7441   9336  12453  10954  15673</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="co">#&gt; [41]  11341  17534  14928  20145   9566   9815   7089  16355  19848  36842</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; [51]  16843 130882  20638  10511  15543  35862 211226  11387   8898  11581</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="co">#&gt; [61]  15679  22381  33309  40648  15059  10776   9243   7970  10740  42745</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co">#&gt; [71]  14398   6462  15932   9421  24986   7310 430640  93158  18914   5131</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt; [81]  10350 165224  12167  33704  89542  17767   6317  12534   7570  35625</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; [91]  46225  21704   6403  38013  10866  21056 102172   7598  13229</span></span></code></pre></div>
 </div>
 <div id="group_pop" class="section level1">
 <h1>group_pop</h1>
@@ -518,17 +518,17 @@ population of interest within each unit.</p></li>
 <code>grouppop</code>, <code>grouppopvec</code></p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>iowa<span class="sc">$</span>white</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]   7507   3922  13325  12470   6007  25387 109968  25194  23459  20344</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11]  13756  14552   9470  20119  13502  17897  40876  11553  12048   8208</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21]  15843  17563  45454  12541  58630   8556   7946  17408  36059  16255</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [31]  86981   9319  19987  15443   9334   7123   9017  12190  10595  14344</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [41]  10744  16430  14532  18141   9314   9288   6907  15818  19223  35284</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [51]  14539 108767  19716  10286  15121  32833 188592   9309   8720  11267</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [61]  15233  21242  31834  31807  14390  10564   8904   7677  10265  34518</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [71]  13605   5937  14767   9108  23782   7043 347710  83609  17705   4966</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [81]  10031 136884  11763  30090  77812  14874   5872  12029   7373  31157</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [91]  44266  20114   6244  34210  10247  20153  79282   7335  11738</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>iowa<span class="sc">$</span>white</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt;  [1]   7507   3922  13325  12470   6007  25387 109968  25194  23459  20344</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; [11]  13756  14552   9470  20119  13502  17897  40876  11553  12048   8208</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; [21]  15843  17563  45454  12541  58630   8556   7946  17408  36059  16255</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; [31]  86981   9319  19987  15443   9334   7123   9017  12190  10595  14344</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; [41]  10744  16430  14532  18141   9314   9288   6907  15818  19223  35284</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; [51]  14539 108767  19716  10286  15121  32833 188592   9309   8720  11267</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt; [61]  15233  21242  31834  31807  14390  10564   8904   7677  10265  34518</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt; [71]  13605   5937  14767   9108  23782   7043 347710  83609  17705   4966</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt; [81]  10031 136884  11763  30090  77812  14874   5872  12029   7373  31157</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt; [91]  44266  20114   6244  34210  10247  20153  79282   7335  11738</span></span></code></pre></div>
 </div>
 <div id="pop_bounds" class="section level1">
 <h1>pop_bounds</h1>
@@ -539,9 +539,9 @@ is the target population, and the third is the upper bound for
 population.</p></li>
 <li><p>Example:</p></li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tidy eval - stored in redist_map object</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attr</span>(iowa_map, <span class="st">&#39;pop_bounds&#39;</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 753972.9 761588.8 769204.6</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># tidy eval - stored in redist_map object</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">attr</span>(iowa_map, <span class="st">&#39;pop_bounds&#39;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; [1] 753972.9 761588.8 769204.6</span></span></code></pre></div>
 </div>
 <div id="ncores" class="section level1">
 <h1>ncores</h1>

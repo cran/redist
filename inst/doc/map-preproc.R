@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -84,7 +84,7 @@ king_merged = merge_by(king_land, city, drop_geom=FALSE)
 plot(king_merged, adj=T)
 
 ## -----------------------------------------------------------------------------
-cat(redist.splits(king_land$distr, king_land$city), "split cities\n")
+cat(splits_admin(king_land$distr, king_land, city), "split cities\n")
 
 king_land %>%
     mutate(is_unsplit = !is_county_split(distr, city)) %>%

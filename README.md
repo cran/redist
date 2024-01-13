@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/alarm-redist/redist/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/alarm-redist/redist/actions/workflows/check-standard.yaml)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version-last-release/redist)](https://cran.r-project.org/package=redist)
 ![CRAN downloads](http://cranlogs.r-pkg.org/badges/grand-total/redist)
 
@@ -40,15 +41,18 @@ Contributors:
 
 Papers:
 
-- [Automated Redistricting Simulation Using Markov Chain Monte
-  Carlo](https://doi.org/10.1080/10618600.2020.1739532) *Journal of
-  Computational and Graphical Statistics*
-- [The Essential Role of Empirical Validation in Legislative
-  Redistricting
-  Simulation](https://doi.org/10.1080/2330443X.2020.1791773) *Statistics
-  and Public Policy* Vol. 7, No. 1, pp. 52-68.
-- [Sequential Monte Carlo for Sampling Balanced and Compact
-  Redistricting Plans](https://arxiv.org/pdf/2008.06131.pdf)
+- McCartan, C., & Imai, K. (Forthcoming). [Sequential Monte Carlo for
+  sampling balanced and compact redistricting
+  plans](https://arxiv.org/abs/2008.06131/). *Annals of Applied
+  Statistics*.
+- Fifield, B., Higgins, M., Imai, K., & Tarr, A. (2020). [Automated
+  redistricting simulation using Markov chain Monte
+  Carlo](https://doi.org/10.1080/10618600.2020.1739532). *Journal of
+  Computational and Graphical Statistics*, 29(4), 715-728.
+- Fifield, B., Imai, K., Kawahara, J., & Kenny, C. T. (2020). [The
+  essential role of empirical validation in legislative redistricting
+  simulation](https://doi.org/10.1080/2330443X.2020.1791773).
+  *Statistics and Public Policy*, 7(1), 52-68.
 
 ## Installation Instructions
 
@@ -59,7 +63,7 @@ install.packages("redist")
 ```
 
 You can also install the most recent development version of `redist`
-(which is usually quite stable) using the \`remotes\`\` package.
+(which is usually quite stable) using the `remotes` package.
 
 ``` r
 if (!require(remotes)) install.packages("remotes")
@@ -83,7 +87,7 @@ iowa_map = redist_map(iowa, existing_plan=cd_2010, pop_tol=0.001, total_pop = po
 # simulate 500 plans using the SMC algorithm
 iowa_plans = redist_smc(iowa_map, nsims=500)
 #> SEQUENTIAL MONTE CARLO
-#> Sampling 500 99-unit maps with 4 districts and population between 760827 and 762350.
+#> Sampling 500 99-unit maps with 4 districts and population between 760,827 and 762,350.
 ```
 
 After generating plans, you can use `redist`’s plotting functions to
@@ -102,9 +106,10 @@ redist.plot.plans(iowa_plans, draws=c("cd_2010", "1", "2", "3"), shp=iowa_map)
 ``` r
 
 iowa_plans = iowa_plans %>%
-    mutate(Compactness = distr_compactness(iowa_map),
+    mutate(Compactness = comp_polsby(pl(), iowa_map),
            `Population deviation` = plan_parity(iowa_map),
            `Democratic vote` = group_frac(iowa_map, dem_08, tot_08))
+#> Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
 
 hist(iowa_plans, `Population deviation`) + hist(iowa_plans, Compactness) +
     plot_layout(guides="collect") +
