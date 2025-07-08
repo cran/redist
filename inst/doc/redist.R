@@ -16,7 +16,7 @@ iowa_map = redist_map(iowa, existing_plan=cd_2010, pop_tol=0.01, total_pop = pop
 print(iowa_map)
 
 ## ----iowa-adj, fig.width=8----------------------------------------------------
-plot(iowa_map, adj=T) + plot(iowa_map)
+plot(iowa_map, adj=TRUE) + plot(iowa_map)
 
 ## ----iowa-chloro, message=FALSE-----------------------------------------------
 areas = as.numeric(units::set_units(sf::st_area(iowa_map$geometry), mi^2))

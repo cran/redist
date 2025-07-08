@@ -78,10 +78,10 @@ flip_chains <- lapply(1:nchains, function(x){
 })
 
 ## ----eval=F-------------------------------------------------------------------
-#  mcmc_chains <- parallel::mclapply(1:nchains, function(x){
-#    redist_flip(map_ia, nsims = nsims,
-#                constraints = constr, verbose = FALSE)
-#  }, mc.set.seed = 1, mc.cores = parallel::detectCores())
+# mcmc_chains <- parallel::mclapply(1:nchains, function(x){
+#   redist_flip(map_ia, nsims = nsims,
+#               constraints = constr, verbose = FALSE)
+# }, mc.set.seed = 1, mc.cores = parallel::detectCores())
 
 ## -----------------------------------------------------------------------------
 data(iowa)
