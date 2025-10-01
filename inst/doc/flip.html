@@ -48,8 +48,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +61,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -508,7 +509,7 @@ parity deviation of 0.05 (with <code>pop_tol</code>).</p>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#&gt; ── Automated Redistricting Simulation Using Markov Chain Monte Carlo ──</span></span>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co">#&gt; ℹ Preprocessing data.</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■■■■■■■■■■■■■■■■              63% | ETA:  0s | MH Acceptance: 0.63■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.65</span></span></code></pre></div>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■■■■■■■■■                     39% | ETA:  0s | MH Acceptance: 0.67■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.65</span></span></code></pre></div>
 <p>The printed output can be silenced by setting
 <code>verbose = FALSE</code>, however it displays very important
 information. First, it displays when preprocessing begins and when the
@@ -548,7 +549,7 @@ constraint, as below:</p>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; ── Automated Redistricting Simulation Using Markov Chain Monte Carlo ──</span></span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; ℹ Preprocessing data.</span></span>
 <span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.61</span></span></code></pre></div>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■■■■■■■■■■■■■■■■■■■           73% | ETA:  0s | MH Acceptance: 0.63■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.61</span></span></code></pre></div>
 <p>The first arguments as the same, but this adds three key arguments.
 First, setting <code>constraint</code> to any combination of the nine
 implemented constraints allows us to specify the target distribution.
@@ -624,7 +625,7 @@ flip.</p>
 <span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co">#&gt; ── Automated Redistricting Simulation Using Markov Chain Monte Carlo ──</span></span>
 <span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co">#&gt; ℹ Preprocessing data.</span></span>
 <span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span>
-<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■■                            17% | ETA:  0s | MH Acceptance: 0.80■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.80</span></span></code></pre></div>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 1s■■                                 3% | ETA: 1s■■■■■■■■■                         26% | ETA:  1s | MH Acceptance: 0.80■■■■■■■■■■■■■■■■■■■■              62% | ETA:  0s | MH Acceptance: 0.82■■■■■■■■■■■■■■■■■■■■■■■■■■■       85% | ETA:  0s | MH Acceptance: 0.79■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.80</span></span></code></pre></div>
 <p><code>redist_flip</code>’s constraint includes a relatively weak
 compactness constraint by default because simulating compact maps is far
 more efficient and completely non-compact maps are not super useful for
@@ -640,7 +641,7 @@ object</p>
 <span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="co">#&gt; ── Automated Redistricting Simulation Using Markov Chain Monte Carlo ──</span></span>
 <span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; ℹ Preprocessing data.</span></span>
 <span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; ■■■■■■■                           21% | ETA:  0s | MH Acceptance: 1.00■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.97</span></span></code></pre></div>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 2s■■■                                5% | ETA: 2s■■■■■■■■■■■                       35% | ETA:  1s | MH Acceptance: 1.00■■■■■■■■■■■■■■■■■■■               61% | ETA:  0s | MH Acceptance: 0.97■■■■■■■■■■■■■■■■■■■■■■■■■■■■      89% | ETA:  0s | MH Acceptance: 0.96■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.97</span></span></code></pre></div>
 <p><code>redist_flip</code> outputs a <code>redist_plans</code>
 object.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">class</span>(tidy_sims)</span>
@@ -741,7 +742,7 @@ advice, we’ll use the following example:</p>
 <span id="cb30-12"><a href="#cb30-12" tabindex="-1"></a><span class="co">#&gt; ── Automated Redistricting Simulation Using Markov Chain Monte Carlo ──</span></span>
 <span id="cb30-13"><a href="#cb30-13" tabindex="-1"></a><span class="co">#&gt; ℹ Preprocessing data.</span></span>
 <span id="cb30-14"><a href="#cb30-14" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span>
-<span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■■■■■                         27% | ETA:  0s | MH Acceptance: 0.55■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.55</span></span></code></pre></div>
+<span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■■■■■■■■■■                    42% | ETA:  0s | MH Acceptance: 0.60■■■■■■■■■■■■■■■■■■■■■■■■■■■■      90% | ETA:  0s | MH Acceptance: 0.56■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.55</span></span></code></pre></div>
 <div id="acceptance-ratios" class="section level2">
 <h2>Acceptance Ratios</h2>
 <p>One of the first things to check when working with <code>flip</code>
@@ -855,7 +856,7 @@ set up.</p>
 <span id="cb37-5"><a href="#cb37-5" tabindex="-1"></a><span class="co">#&gt; ── Automated Redistricting Simulation Using Markov Chain Monte Carlo ──</span></span>
 <span id="cb37-6"><a href="#cb37-6" tabindex="-1"></a><span class="co">#&gt; ℹ Preprocessing data.</span></span>
 <span id="cb37-7"><a href="#cb37-7" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span>
-<span id="cb37-8"><a href="#cb37-8" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■                             15% | ETA:  0s | MH Acceptance: 0.70■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.75</span></span></code></pre></div>
+<span id="cb37-8"><a href="#cb37-8" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 1s■■■■■                             12% | ETA:  1s | MH Acceptance: 0.70■■■■■■■■■■■■■■■■■■■■              63% | ETA:  0s | MH Acceptance: 0.80■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.75</span></span></code></pre></div>
 <p>Now, the interesting this here is that adding more constraints
 actually increased the acceptance probability. This is because
 correlated constraints can guide the algorithm towards high probability
@@ -876,7 +877,8 @@ about.</p>
 <span id="cb38-10"><a href="#cb38-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb38-11"><a href="#cb38-11" tabindex="-1"></a><span class="co">#&gt; ── Automated Redistricting Simulation Using Markov Chain Monte Carlo ──</span></span>
 <span id="cb38-12"><a href="#cb38-12" tabindex="-1"></a><span class="co">#&gt; ℹ Preprocessing data.</span></span>
-<span id="cb38-13"><a href="#cb38-13" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span></code></pre></div>
+<span id="cb38-13"><a href="#cb38-13" tabindex="-1"></a><span class="co">#&gt; ℹ Starting swMH().</span></span>
+<span id="cb38-14"><a href="#cb38-14" tabindex="-1"></a><span class="co">#&gt; ■                                  1% | ETA: 0s■■■■■                             13% | ETA:  0s | MH Acceptance: 0.70■■■■■■■■■■■■■■■■■■■■■             66% | ETA:  0s | MH Acceptance: 0.30■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s | MH Acceptance: 0.19</span></span></code></pre></div>
 <p>For example, this new set of constraints might be a good place to
 simulate at.</p>
 <p>Notably, the process of tuning should be guided by the constraint

@@ -1,9 +1,9 @@
 Package: redist
-Version: 4.3.0
-Date: 2025-07-07
+Version: 4.3.1
+Date: 2025-09-30
 Title: Simulation Methods for Legislative Redistricting
 Authors@R: c(
-    person("Christopher T.", "Kenny", email = "christopherkenny@fas.harvard.edu", 
+    person("Christopher T.", "Kenny", email = "ctkenny@proton.me", 
            role = c("aut", "cre"), comment = c(ORCID = "0000-0002-9386-6860")),
     person("Cory", "McCartan", email = "mccartan@psu.edu", role = "aut",
            comment = c(ORCID = "0000-0002-6251-669X")),
@@ -45,7 +45,7 @@ Encoding: UTF-8
 Config/testthat/edition: 3
 Language: en-US
 LazyData: true
-Packaged: 2025-07-08 01:44:41 UTC; chris
+Packaged: 2025-10-01 00:09:57 UTC; chris
 Author: Christopher T. Kenny [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-9386-6860>),
   Cory McCartan [aut] (ORCID: <https://orcid.org/0000-0002-6251-669X>),
@@ -54,6 +54,6 @@ Author: Christopher T. Kenny [aut, cre] (ORCID:
   Jun Kawahara [ctb],
   Alexander Tarr [ctb],
   Michael Higgins [ctb]
-Maintainer: Christopher T. Kenny <christopherkenny@fas.harvard.edu>
+Maintainer: Christopher T. Kenny <ctkenny@proton.me>
 Repository: CRAN
-Date/Publication: 2025-07-08 10:50:02 UTC
+Date/Publication: 2025-10-01 13:40:02 UTC
