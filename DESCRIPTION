@@ -1,6 +1,6 @@
 Package: redist
-Version: 4.3.1
-Date: 2025-09-30
+Version: 4.3.2
+Date: 2026-02-10
 Title: Simulation Methods for Legislative Redistricting
 Authors@R: c(
     person("Christopher T.", "Kenny", email = "ctkenny@proton.me", 
@@ -39,13 +39,13 @@ SystemRequirements: C++17, python
 NeedsCompilation: yes
 BugReports: https://github.com/alarm-redist/redist/issues
 URL: https://alarm-redist.org/redist/
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 Encoding: UTF-8
 Config/testthat/edition: 3
 Language: en-US
 LazyData: true
-Packaged: 2025-10-01 00:09:57 UTC; chris
+Packaged: 2026-02-12 15:43:56 UTC; chris
 Author: Christopher T. Kenny [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-9386-6860>),
   Cory McCartan [aut] (ORCID: <https://orcid.org/0000-0002-6251-669X>),
@@ -56,4 +56,4 @@ Author: Christopher T. Kenny [aut, cre] (ORCID:
   Michael Higgins [ctb]
 Maintainer: Christopher T. Kenny <ctkenny@proton.me>
 Repository: CRAN
-Date/Publication: 2025-10-01 13:40:02 UTC
+Date/Publication: 2026-02-12 16:30:02 UTC
